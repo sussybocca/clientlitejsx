@@ -1,0 +1,8 @@
+{
+  "name": "registry-server-fire",
+  "version": "1.0.0",
+  "type": "hybrid",
+  "author": "Unknown",
+  "description": "A CLJ package",
+  "main": "src/index.js"
+}
