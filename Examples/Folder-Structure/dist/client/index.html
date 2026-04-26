@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ClientLite App</title>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+       
+</head>
+<body>
+    <div id="root"></div>
+    <script src="/chunk-loader.js"></script>
+        <script src="/bundle.js"></script>
+
+<script>
+(function() {
+  var ws = null;
+  var reconnectTimer = null;
+  var reconnectAttempts = 0;
+  var heartbeatInterval = null;
+  var clientId = null;
+  var modules = new Map();
+  var updateInProgress = false;
+  var updateQueue = [];
+  
+  // HotModule class
+  var HotModule = function(id, exports, dependencies) {
+    this.id = id;
+    this.exports = exports;
+    this.dependencies = dependencies || [];
+    this.callbacks = {
+      accept: [],
+      dispose: [],
+      selfAccept: []
+    };
+    this.state = {};
+    this.version = 1;
+    this.isAccepted = false;
+    this.isDeclined = false;
+  };
+  
+  HotModule.prototype.accept = function(callback) {
+    this.callbacks.selfAccept.push(callback);
+    this.isAccepted = true;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'hot-accept',
+        moduleId: this.id
+      }));
+    }
+  };
+  
+  HotModule.prototype.dispose = function(callback) {
+    this.callbacks.dispose.push(callback);
+  };
+  
+  HotModule.prototype.decline = function() {
+    this.isDeclined = true;
+    this.isAccepted = false;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'reject-update',
+        moduleId: this.id
+      }));
+    }
+  };
+  
+  HotModule.prototype.callAccept = function(oldExports, newExports) {
+    for (var i = 0; i < this.callbacks.selfAccept.length; i++) {
+      try {
+        this.callbacks.selfAccept[i](oldExports, newExports);
+      } catch(e) {
+        console.error('Accept error in ' + this.id + ':', e);
+      }
+    }
+    return true;
+  };
+  
+  HotModule.prototype.callDispose = function() {
+    for (var i = 0; i < this.callbacks.dispose.length; i++) {
+      try {
+        this.callbacks.dispose[i](this.exports);
+      } catch(e) {
+        console.error('Dispose error in ' + this.id + ':', e);
+      }
+    }
+  };
+  
+  HotModule.prototype.updateExports = function(newExports, newVersion) {
+    var oldExports = this.exports;
+    this.exports = newExports;
+    this.version = newVersion;
+    return { oldExports: oldExports, newExports: newExports };
+  };
+  
+  // HMR API
+  window.__hmr = {
+    register: function(id, exports, dependencies) {
+      if (!modules.has(id)) {
+        modules.set(id, new HotModule(id, exports, dependencies));
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'register-module',
+            moduleId: id,
+            dependencies: dependencies || [],
+            acceptHMR: false,
+            timestamp: Date.now(),
+            exports: Object.keys(exports || {})
+          }));
+        }
+        console.debug('[HMR] Registered: ' + id);
+      }
+      return modules.get(id);
+    },
+    
+    get: function(id) {
+      return modules.get(id);
+    },
+    
+    has: function(id) {
+      return modules.has(id);
+    },
+    
+    check: function(id) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        var mod = modules.get(id);
+        ws.send(JSON.stringify({
+          type: 'check-update',
+          moduleId: id,
+          lastUpdate: mod ? mod.version : 0
+        }));
+      }
+    }
+  };
+  
+  // Apply hot update
+  async function applyHotUpdate(updateData) {
+    var moduleId = updateData.moduleId;
+    var code = updateData.code;
+    var version = updateData.version;
+    var affectedModules = updateData.affectedModules || [];
+    var strategy = updateData.strategy;
+    
+    if (updateInProgress) {
+      updateQueue.push(updateData);
+      console.log('[HMR] Queued update for ' + moduleId);
+      return;
+    }
+    
+    updateInProgress = true;
+    var startTime = performance.now();
+    
+    try {
+      console.log('[HMR] Updating ' + moduleId + ' (v' + version + ', ' + strategy + ')');
+      
+      var oldModule = modules.get(moduleId);
+      
+      if (oldModule && oldModule.isDeclined) {
+        console.warn('[HMR] Module declined update, reloading');
+        window.location.reload();
+        return;
+      }
+      
+      // Dispose affected modules
+      for (var i = affectedModules.length - 1; i >= 0; i--) {
+        var affectedId = affectedModules[i];
+        var mod = modules.get(affectedId);
+        if (mod && mod !== oldModule) {
+          mod.callDispose();
+        }
+      }
+      
+      // Dispose current module
+      var oldState = null;
+      if (oldModule) {
+        oldModule.callDispose();
+        oldState = oldModule.state;
+      }
+      
+      // Create and execute new module
+      var blob = new Blob([code], { type: 'application/javascript' });
+      var url = URL.createObjectURL(blob);
+      
+      var newExports;
+      try {
+        var imported = await import(url);
+        newExports = imported.default || imported;
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+      
+      // Update module
+      var updateResult;
+      if (oldModule) {
+        updateResult = oldModule.updateExports(newExports, version);
+        if (oldState) {
+          oldModule.state = oldState;
+        }
+        oldModule.callAccept(updateResult.oldExports, updateResult.newExports);
+      } else {
+        var newModule = new HotModule(moduleId, newExports, updateData.dependencies);
+        modules.set(moduleId, newModule);
+        updateResult = { oldExports: null, newExports: newExports };
+      }
+      
+      var duration = performance.now() - startTime;
+      console.log('%c[HMR] ' + moduleId + ' updated in ' + duration.toFixed(1) + 'ms', 'color: #00ff00');
+      
+      // Dispatch events
+      window.dispatchEvent(new CustomEvent('hmr:after-update', {
+        detail: {
+          moduleId: moduleId,
+          oldExports: updateResult.oldExports,
+          newExports: updateResult.newExports,
+          version: version,
+          duration: duration
+        }
+      }));
+      
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'update-applied',
+          moduleId: moduleId,
+          version: version
+        }));
+      }
+      
+    } catch(error) {
+      console.error('[HMR] Update failed:', error);
+      console.log('[HMR] Falling back to full reload');
+      window.location.reload();
+    } finally {
+      updateInProgress = false;
+      if (updateQueue.length > 0) {
+        var nextUpdate = updateQueue.shift();
+        setTimeout(function() { applyHotUpdate(nextUpdate); }, 50);
+      }
+    }
+  }
+  
+  // Connect WebSocket
+  function connectHMR() {
+    if (reconnectTimer) clearTimeout(reconnectTimer);
+    
+    var protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    var wsUrl = protocol + '//' + location.host + '/__hmr';
+    
+    try {
+      ws = new WebSocket(wsUrl);
+      
+      ws.onopen = function() {
+        console.log('%c🔥 HMR Connected', 'color: #00ff00; font-weight: bold');
+        reconnectAttempts = 0;
+        
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        heartbeatInterval = setInterval(function() {
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'ping', timestamp: Date.now(), clientId: clientId }));
+          }
+        }, 25000);
+        
+        // Re-register modules
+        var moduleEntries = Array.from(modules.entries());
+        for (var i = 0; i < moduleEntries.length; i++) {
+          var entry = moduleEntries[i];
+          var id = entry[0];
+          var module = entry[1];
+          ws.send(JSON.stringify({
+            type: 'register-module',
+            moduleId: id,
+            dependencies: module.dependencies,
+            acceptHMR: module.isAccepted,
+            timestamp: Date.now(),
+            version: module.version
+          }));
+        }
+      };
+      
+      ws.onmessage = function(event) {
+        try {
+          var msg = JSON.parse(event.data);
+          
+          if (msg.type === 'init') {
+            clientId = msg.data.clientId;
+            console.log('[HMR] Client ID: ' + clientId);
+          } else if (msg.type === 'hot-update') {
+            applyHotUpdate(msg.data);
+          } else if (msg.type === 'reload' || msg.type === 'force-reload') {
+            console.log('[HMR] Reloading...');
+            window.location.reload();
+          } else if (msg.type === 'pong') {
+            // Connection alive
+          }
+        } catch(e) {
+          console.error('[HMR] Message error:', e);
+        }
+      };
+      
+      ws.onclose = function(event) {
+        console.log('[HMR] Disconnected, reconnecting...');
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        
+        reconnectAttempts++;
+        var delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+        reconnectTimer = setTimeout(connectHMR, delay);
+      };
+      
+      ws.onerror = function(error) {
+        console.error('[HMR] Connection error:', error);
+      };
+      
+    } catch(e) {
+      console.error('[HMR] Failed to connect:', e);
+      reconnectTimer = setTimeout(connectHMR, 1000);
+    }
+  }
+  
+  // Initialize
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', connectHMR);
+  } else {
+    connectHMR();
+  }
+  
+  window.__HMR_READY = true;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,575 @@
+{
+  "inputs": {
+    "node_modules/react/cjs/react.development.js": {
+      "bytes": 87593,
+      "imports": [],
+      "format": "cjs"
+    },
+    "node_modules/react/index.js": {
+      "bytes": 190,
+      "imports": [
+        {
+          "path": "node_modules/react/cjs/react.development.js",
+          "kind": "require-call",
+          "original": "./cjs/react.development.js"
+        }
+      ],
+      "format": "cjs"
+    },
+    "node_modules/scheduler/cjs/scheduler.development.js": {
+      "bytes": 17497,
+      "imports": [],
+      "format": "cjs"
+    },
+    "node_modules/scheduler/index.js": {
+      "bytes": 198,
+      "imports": [
+        {
+          "path": "node_modules/scheduler/cjs/scheduler.development.js",
+          "kind": "require-call",
+          "original": "./cjs/scheduler.development.js"
+        }
+      ],
+      "format": "cjs"
+    },
+    "node_modules/react-dom/cjs/react-dom.development.js": {
+      "bytes": 1029622,
+      "imports": [
+        {
+          "path": "node_modules/react/index.js",
+          "kind": "require-call",
+          "original": "react"
+        },
+        {
+          "path": "node_modules/scheduler/index.js",
+          "kind": "require-call",
+          "original": "scheduler"
+        }
+      ],
+      "format": "cjs"
+    },
+    "node_modules/react-dom/index.js": {
+      "bytes": 1363,
+      "imports": [
+        {
+          "path": "node_modules/react-dom/cjs/react-dom.development.js",
+          "kind": "require-call",
+          "original": "./cjs/react-dom.development.js"
+        }
+      ],
+      "format": "cjs"
+    },
+    "node_modules/react-dom/client.js": {
+      "bytes": 619,
+      "imports": [
+        {
+          "path": "node_modules/react-dom/index.js",
+          "kind": "require-call",
+          "original": "react-dom"
+        }
+      ],
+      "format": "cjs"
+    },
+    "node_modules/three/build/three.module.js": {
+      "bytes": 1272972,
+      "imports": [
+        {
+          "path": "<runtime>",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/react/cjs/react-jsx-runtime.development.js": {
+      "bytes": 42700,
+      "imports": [
+        {
+          "path": "node_modules/react/index.js",
+          "kind": "require-call",
+          "original": "react"
+        }
+      ],
+      "format": "cjs"
+    },
+    "node_modules/react/jsx-runtime.js": {
+      "bytes": 214,
+      "imports": [
+        {
+          "path": "node_modules/react/cjs/react-jsx-runtime.development.js",
+          "kind": "require-call",
+          "original": "./cjs/react-jsx-runtime.development.js"
+        }
+      ],
+      "format": "cjs"
+    },
+    "node_modules/@kurkle/color/dist/color.esm.js": {
+      "bytes": 12609,
+      "imports": [],
+      "format": "esm"
+    },
+    "node_modules/chart.js/dist/chunks/helpers.dataset.js": {
+      "bytes": 96538,
+      "imports": [
+        {
+          "path": "node_modules/@kurkle/color/dist/color.esm.js",
+          "kind": "import-statement",
+          "original": "@kurkle/color"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/chart.js/dist/chart.js": {
+      "bytes": 408255,
+      "imports": [
+        {
+          "path": "node_modules/chart.js/dist/chunks/helpers.dataset.js",
+          "kind": "import-statement",
+          "original": "./chunks/helpers.dataset.js"
+        },
+        {
+          "path": "node_modules/@kurkle/color/dist/color.esm.js",
+          "kind": "import-statement",
+          "original": "@kurkle/color"
+        },
+        {
+          "path": "<runtime>",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/react-chartjs-2/dist/index.js": {
+      "bytes": 5889,
+      "imports": [
+        {
+          "path": "node_modules/react/jsx-runtime.js",
+          "kind": "import-statement",
+          "original": "react/jsx-runtime"
+        },
+        {
+          "path": "node_modules/react/index.js",
+          "kind": "import-statement",
+          "original": "react"
+        },
+        {
+          "path": "node_modules/chart.js/dist/chart.js",
+          "kind": "import-statement",
+          "original": "chart.js"
+        },
+        {
+          "path": "<runtime>",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/react-hook-form/dist/index.esm.mjs": {
+      "bytes": 115080,
+      "imports": [
+        {
+          "path": "node_modules/react/index.js",
+          "kind": "import-statement",
+          "original": "react"
+        },
+        {
+          "path": "<runtime>",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/@hookform/resolvers/dist/resolvers.mjs": {
+      "bytes": 693,
+      "imports": [
+        {
+          "path": "node_modules/react-hook-form/dist/index.esm.mjs",
+          "kind": "import-statement",
+          "original": "react-hook-form"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/@hookform/resolvers/zod/dist/zod.mjs": {
+      "bytes": 1180,
+      "imports": [
+        {
+          "path": "node_modules/@hookform/resolvers/dist/resolvers.mjs",
+          "kind": "import-statement",
+          "original": "@hookform/resolvers"
+        },
+        {
+          "path": "node_modules/react-hook-form/dist/index.esm.mjs",
+          "kind": "import-statement",
+          "original": "react-hook-form"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v3/helpers/util.js": {
+      "bytes": 4055,
+      "imports": [
+        {
+          "path": "<runtime>",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v3/ZodError.js": {
+      "bytes": 4349,
+      "imports": [
+        {
+          "path": "node_modules/zod/v3/helpers/util.js",
+          "kind": "import-statement",
+          "original": "./helpers/util.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v3/locales/en.js": {
+      "bytes": 5602,
+      "imports": [
+        {
+          "path": "node_modules/zod/v3/ZodError.js",
+          "kind": "import-statement",
+          "original": "../ZodError.js"
+        },
+        {
+          "path": "node_modules/zod/v3/helpers/util.js",
+          "kind": "import-statement",
+          "original": "../helpers/util.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v3/errors.js": {
+      "bytes": 243,
+      "imports": [
+        {
+          "path": "node_modules/zod/v3/locales/en.js",
+          "kind": "import-statement",
+          "original": "./locales/en.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v3/helpers/parseUtil.js": {
+      "bytes": 3601,
+      "imports": [
+        {
+          "path": "node_modules/zod/v3/errors.js",
+          "kind": "import-statement",
+          "original": "../errors.js"
+        },
+        {
+          "path": "node_modules/zod/v3/locales/en.js",
+          "kind": "import-statement",
+          "original": "../locales/en.js"
+        },
+        {
+          "path": "<runtime>",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v3/helpers/typeAliases.js": {
+      "bytes": 11,
+      "imports": [],
+      "format": "esm"
+    },
+    "node_modules/zod/v3/helpers/errorUtil.js": {
+      "bytes": 300,
+      "imports": [],
+      "format": "esm"
+    },
+    "node_modules/zod/v3/types.js": {
+      "bytes": 131212,
+      "imports": [
+        {
+          "path": "node_modules/zod/v3/ZodError.js",
+          "kind": "import-statement",
+          "original": "./ZodError.js"
+        },
+        {
+          "path": "node_modules/zod/v3/errors.js",
+          "kind": "import-statement",
+          "original": "./errors.js"
+        },
+        {
+          "path": "node_modules/zod/v3/helpers/errorUtil.js",
+          "kind": "import-statement",
+          "original": "./helpers/errorUtil.js"
+        },
+        {
+          "path": "node_modules/zod/v3/helpers/parseUtil.js",
+          "kind": "import-statement",
+          "original": "./helpers/parseUtil.js"
+        },
+        {
+          "path": "node_modules/zod/v3/helpers/util.js",
+          "kind": "import-statement",
+          "original": "./helpers/util.js"
+        },
+        {
+          "path": "<runtime>",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/v3/external.js": {
+      "bytes": 205,
+      "imports": [
+        {
+          "path": "node_modules/zod/v3/errors.js",
+          "kind": "import-statement",
+          "original": "./errors.js"
+        },
+        {
+          "path": "node_modules/zod/v3/helpers/parseUtil.js",
+          "kind": "import-statement",
+          "original": "./helpers/parseUtil.js"
+        },
+        {
+          "path": "node_modules/zod/v3/helpers/typeAliases.js",
+          "kind": "import-statement",
+          "original": "./helpers/typeAliases.js"
+        },
+        {
+          "path": "node_modules/zod/v3/helpers/util.js",
+          "kind": "import-statement",
+          "original": "./helpers/util.js"
+        },
+        {
+          "path": "node_modules/zod/v3/types.js",
+          "kind": "import-statement",
+          "original": "./types.js"
+        },
+        {
+          "path": "node_modules/zod/v3/ZodError.js",
+          "kind": "import-statement",
+          "original": "./ZodError.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/zod/index.js": {
+      "bytes": 105,
+      "imports": [
+        {
+          "path": "node_modules/zod/v3/external.js",
+          "kind": "import-statement",
+          "original": "./v3/external.js"
+        },
+        {
+          "path": "node_modules/zod/v3/external.js",
+          "kind": "import-statement",
+          "original": "./v3/external.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/gsap/gsap-core.js": {
+      "bytes": 171676,
+      "imports": [],
+      "format": "esm"
+    },
+    "node_modules/gsap/CSSPlugin.js": {
+      "bytes": 65156,
+      "imports": [
+        {
+          "path": "node_modules/gsap/gsap-core.js",
+          "kind": "import-statement",
+          "original": "./gsap-core.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/gsap/index.js": {
+      "bytes": 664,
+      "imports": [
+        {
+          "path": "node_modules/gsap/gsap-core.js",
+          "kind": "import-statement",
+          "original": "./gsap-core.js"
+        },
+        {
+          "path": "node_modules/gsap/CSSPlugin.js",
+          "kind": "import-statement",
+          "original": "./CSSPlugin.js"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/App.jsx": {
+      "bytes": 44310,
+      "imports": [
+        {
+          "path": "node_modules/react/index.js",
+          "kind": "import-statement",
+          "original": "react"
+        },
+        {
+          "path": "node_modules/react-dom/client.js",
+          "kind": "import-statement",
+          "original": "react-dom/client"
+        },
+        {
+          "path": "node_modules/three/build/three.module.js",
+          "kind": "import-statement",
+          "original": "three"
+        },
+        {
+          "path": "node_modules/react-chartjs-2/dist/index.js",
+          "kind": "import-statement",
+          "original": "react-chartjs-2"
+        },
+        {
+          "path": "node_modules/chart.js/dist/chart.js",
+          "kind": "import-statement",
+          "original": "chart.js"
+        },
+        {
+          "path": "node_modules/react-hook-form/dist/index.esm.mjs",
+          "kind": "import-statement",
+          "original": "react-hook-form"
+        },
+        {
+          "path": "node_modules/@hookform/resolvers/zod/dist/zod.mjs",
+          "kind": "import-statement",
+          "original": "@hookform/resolvers/zod"
+        },
+        {
+          "path": "node_modules/zod/index.js",
+          "kind": "import-statement",
+          "original": "zod"
+        },
+        {
+          "path": "node_modules/gsap/index.js",
+          "kind": "import-statement",
+          "original": "gsap"
+        },
+        {
+          "path": "<runtime>",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    }
+  },
+  "outputs": {
+    "dist/client/bundle.js.map": {
+      "imports": [],
+      "exports": [],
+      "inputs": {},
+      "bytes": 5485787
+    },
+    "dist/client/bundle.js": {
+      "imports": [],
+      "exports": [],
+      "entryPoint": "src/App.jsx",
+      "inputs": {
+        "node_modules/react/cjs/react.development.js": {
+          "bytesInOutput": 81045
+        },
+        "node_modules/react/index.js": {
+          "bytesInOutput": 247
+        },
+        "node_modules/scheduler/cjs/scheduler.development.js": {
+          "bytesInOutput": 17827
+        },
+        "node_modules/scheduler/index.js": {
+          "bytesInOutput": 259
+        },
+        "node_modules/react-dom/cjs/react-dom.development.js": {
+          "bytesInOutput": 952965
+        },
+        "node_modules/react-dom/index.js": {
+          "bytesInOutput": 279
+        },
+        "node_modules/react-dom/client.js": {
+          "bytesInOutput": 846
+        },
+        "node_modules/react/cjs/react-jsx-runtime.development.js": {
+          "bytesInOutput": 38298
+        },
+        "node_modules/react/jsx-runtime.js": {
+          "bytesInOutput": 271
+        },
+        "src/App.jsx": {
+          "bytesInOutput": 56817
+        },
+        "node_modules/three/build/three.module.js": {
+          "bytesInOutput": 874826
+        },
+        "node_modules/react-chartjs-2/dist/index.js": {
+          "bytesInOutput": 4556
+        },
+        "node_modules/@kurkle/color/dist/color.esm.js": {
+          "bytesInOutput": 13555
+        },
+        "node_modules/chart.js/dist/chunks/helpers.dataset.js": {
+          "bytesInOutput": 76966
+        },
+        "node_modules/chart.js/dist/chart.js": {
+          "bytesInOutput": 360692
+        },
+        "node_modules/react-hook-form/dist/index.esm.mjs": {
+          "bytesInOutput": 69316
+        },
+        "node_modules/@hookform/resolvers/dist/resolvers.mjs": {
+          "bytesInOutput": 874
+        },
+        "node_modules/@hookform/resolvers/zod/dist/zod.mjs": {
+          "bytesInOutput": 1620
+        },
+        "node_modules/zod/v3/external.js": {
+          "bytesInOutput": 3502
+        },
+        "node_modules/zod/v3/helpers/util.js": {
+          "bytesInOutput": 3655
+        },
+        "node_modules/zod/v3/ZodError.js": {
+          "bytesInOutput": 3391
+        },
+        "node_modules/zod/v3/locales/en.js": {
+          "bytesInOutput": 5281
+        },
+        "node_modules/zod/v3/errors.js": {
+          "bytesInOutput": 161
+        },
+        "node_modules/zod/v3/helpers/parseUtil.js": {
+          "bytesInOutput": 3314
+        },
+        "node_modules/zod/v3/helpers/errorUtil.js": {
+          "bytesInOutput": 301
+        },
+        "node_modules/zod/v3/types.js": {
+          "bytesInOutput": 112536
+        },
+        "node_modules/zod/index.js": {
+          "bytesInOutput": 0
+        },
+        "node_modules/gsap/gsap-core.js": {
+          "bytesInOutput": 126623
+        },
+        "node_modules/gsap/CSSPlugin.js": {
+          "bytesInOutput": 51231
+        },
+        "node_modules/gsap/index.js": {
+          "bytesInOutput": 108
+        }
+      },
+      "bytes": 2872946
+    }
+  }
+}

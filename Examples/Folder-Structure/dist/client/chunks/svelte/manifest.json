@@ -1,0 +1,12 @@
+[
+  {
+    "name": "svelte-common",
+    "strategy": {
+      "priority": 50,
+      "preload": false,
+      "prefetch": true
+    },
+    "lazy": false,
+    "moduleCount": 1
+  }
+]
