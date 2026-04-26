@@ -1,0 +1,878 @@
+const fs = require('fs');
+const path = require('path');
+const yaml = require('js-yaml');
+const crypto = require('crypto');
+const v8 = require('v8');
+const os = require('os');
+
+function generateId() {
+  return crypto.randomBytes(16).toString('hex');
+}
+
+function enforceMemoryLimit(mb) {
+  v8.setFlagsFromString(`--max-old-space-size=${mb}`);
+  const current = v8.getHeapStatistics().heap_size_limit / (1024 * 1024);
+  console.log(`✅ Memory limit enforced: ${current.toFixed(0)} MB`);
+}
+
+function getSystemInfo() {
+  return {
+    platform: os.platform(),
+    arch: os.arch(),
+    cpus: os.cpus().length,
+    totalMemory: os.totalmem(),
+    freeMemory: os.freemem(),
+    nodeVersion: process.version,
+    hostname: os.hostname()
+  };
+}
+
+async function initConfig() {
+  const targetPath = path.join(process.cwd(), 'CLJ.Config');
+  if (fs.existsSync(targetPath)) return;
+  
+  const template = `# ============================================================
+# CLIENTLITE FRAMEWORK CONFIGURATION
+# Version: 1.0.0
+# ============================================================
+
+# ============================================================
+# API CONFIGURATION
+# ============================================================
+api:
+  # Base directory for API endpoints
+  baseDir: "./api"
+  
+  # Automatically generate index routes
+  autoIndex: true
+  
+  # Enable API versioning
+  versioning: true
+  
+  # API version prefix (e.g., /v1/api/...)
+  versionPrefix: "v1"
+  
+  # CORS settings
+  cors:
+    enabled: true
+    allowedOrigins: ["*"]
+    allowedMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+    credentials: true
+    maxAge: 86400
+  
+  # Rate limiting
+  rateLimit:
+    enabled: false
+    windowMs: 60000  # 1 minute
+    maxRequests: 100  # per window
+    skipSuccessfulRequests: false
+    skipFailedRequests: false
+  
+  # Request logging
+  logging:
+    enabled: true
+    level: "info"  # debug, info, warn, error
+    format: "json"  # json, text
+    includeHeaders: false
+    includeBody: false
+    includeQuery: true
+  
+  # Response compression
+  compression:
+    enabled: true
+    level: 6
+    threshold: 1024  # bytes
+    filter: "text/*, application/json, application/javascript"
+  
+  # Authentication
+  auth:
+    enabled: false
+    type: "jwt"  # jwt, basic, apiKey, oauth2
+    secretKey: ""
+    tokenExpiry: "7d"
+    apiKeyHeader: "X-API-Key"
+    
+  # WebSocket support
+  websocket:
+    enabled: false
+    path: "/ws"
+    maxConnections: 1000
+    heartbeatInterval: 30000
+  
+  # GraphQL support
+  graphql:
+    enabled: false
+    endpoint: "/graphql"
+    playground: true
+    introspection: true
+    depthLimit: 10
+  
+  # File upload settings
+  upload:
+    enabled: true
+    maxFileSize: 5242880  # 5MB
+    allowedMimeTypes: ["image/jpeg", "image/png", "application/json"]
+    uploadDir: "./uploads"
+    preserveFilenames: false
+  
+  # Cache settings
+  cache:
+    enabled: true
+    ttl: 3600  # seconds
+    maxSize: 100  # items
+    invalidationOnUpdate: true
+  
+  # Security headers
+  security:
+    helmetEnabled: true
+    hstsEnabled: true
+    hstsMaxAge: 31536000
+    xFrameOptions: "DENY"
+    xssProtection: true
+    noSniff: true
+
+# ============================================================
+# SERVER CONFIGURATION
+# ============================================================
+server:
+  # Port configuration
+  port: 3000
+  host: "localhost"
+  
+  # Cluster mode (multi-core)
+  cluster:
+    enabled: false
+    workers: "auto"  # auto, or number of workers
+  
+  # SSL/TLS configuration
+  ssl:
+    enabled: false
+    certPath: "./ssl/cert.pem"
+    keyPath: "./ssl/key.pem"
+    caPath: "./ssl/ca.pem"
+    http2: false
+  
+  # Keep-alive settings
+  keepAlive:
+    enabled: true
+    timeout: 5000
+    maxRequests: 1000
+  
+  # Timeout settings
+  timeouts:
+    server: 120000  # 2 minutes
+    socket: 120000
+    headers: 60000
+    request: 60000
+  
+  # Static file serving
+  static:
+    enabled: true
+    directory: "./public"
+    index: "index.html"
+    maxAge: 86400
+    etag: true
+    lastModified: true
+  
+  # Proxy settings
+  proxy:
+    enabled: false
+    target: "http://localhost:8080"
+    changeOrigin: true
+    ws: false
+    pathRewrite: {}
+  
+  # Trust proxy (for reverse proxy setups)
+  trustProxy: false
+  
+  # Request size limits
+  limits:
+    json: "1mb"
+    urlencoded: "1mb"
+    text: "1mb"
+    raw: "1mb"
+    multipart: "5mb"
+
+# ============================================================
+# DATABASE CONFIGURATION
+# ============================================================
+database:
+  # Primary database
+  primary:
+    type: "postgresql"  # postgresql, mysql, sqlite, mongodb
+    host: "localhost"
+    port: 5432
+    username: ""
+    password: ""
+    database: "clientlite"
+    ssl: false
+    
+    # Connection pool
+    pool:
+      min: 2
+      max: 10
+      idle: 10000
+      acquire: 30000
+    
+    # Migrations
+    migrations:
+      enabled: true
+      directory: "./migrations"
+      tableName: "migrations"
+    
+    # Seeding
+    seeding:
+      enabled: false
+      directory: "./seeds"
+  
+  # Read replica (optional)
+  replica:
+    enabled: false
+    host: "localhost"
+    port: 5432
+    
+  # Cache database (Redis)
+  cache:
+    enabled: false
+    type: "redis"
+    host: "localhost"
+    port: 6379
+    password: ""
+    db: 0
+    keyPrefix: "clj:"
+  
+  # Search engine (Elasticsearch)
+  search:
+    enabled: false
+    node: "http://localhost:9200"
+    indexPrefix: "clj_"
+    maxResults: 100
+
+# ============================================================
+# LOGGING CONFIGURATION
+# ============================================================
+logging:
+  # Console logging
+  console:
+    enabled: true
+    level: "info"
+    colorize: true
+    timestamp: true
+  
+  # File logging
+  file:
+    enabled: true
+    level: "debug"
+    filename: "./logs/clientlite.log"
+    maxSize: "10m"
+    maxFiles: 5
+    compress: false
+    
+  # Error logging
+  error:
+    enabled: true
+    filename: "./logs/errors.log"
+    maxSize: "5m"
+    maxFiles: 3
+    
+  # Access logging
+  access:
+    enabled: true
+    filename: "./logs/access.log"
+    format: "combined"  # combined, common, dev, short, tiny
+    
+  # Structured logging (JSON)
+  structured: true
+  
+  # Request ID logging
+  requestId:
+    enabled: true
+    header: "X-Request-Id"
+    generator: "uuid"
+  
+  # Performance logging
+  performance:
+    enabled: false
+    threshold: 100  # ms
+    logSlowRequests: true
+
+# ============================================================
+# CUSTOM SYNTAX BLOCKS
+# ============================================================
+# Users can define their own custom syntax blocks here
+# Each block adds new keywords to JSX that transform into JavaScript functions
+#
+# HOW TO CREATE A CUSTOM LANGUAGE BLOCK:
+# 1. Run: clj gen New L <block-name>
+# 2. Edit the generated block in this file
+# 3. Run: clj run clj.config to activate
+#
+# Each block supports:
+#   - name: The keyword used in JSX (required)
+#   - id: Unique identifier (auto-generated)
+#   - value: Internal representation (auto-generated)
+#   - type: block type (control, async, state, component, transform)
+#   - syntax: Expected syntax pattern
+#   - function: JavaScript function that transforms the block
+#   - description: What the block does
+#   - example: Usage example
+#   - tags: Categories for organization
+#   - returns: What the function returns
+#   - parameters: Expected parameters with types
+#   - dependencies: Required npm packages
+#   - preload: Code to run before block execution
+#   - cleanup: Code to run after block execution
+#
+languageBlocks:
+  # Users add their custom blocks here using:
+  # clj gen New L <block-name>
+  # 
+  # Example custom blocks (uncomment and modify):
+  #
+  # - name: "animate"
+  #   id: "blk_custom_abc123"
+  #   value: "__custom_animate__"
+  #   type: "transform"
+  #   syntax: "animate={animationName}"
+  #   parameters:
+  #     - name: "animationName"
+  #       type: "string"
+  #       required: true
+  #     - name: "duration"
+  #       type: "number"
+  #       default: 300
+  #     - name: "easing"
+  #       type: "string"
+  #       default: "ease"
+  #   function: |
+  #     function animate(animationName, children, duration = 300, easing = 'ease') {
+  #       return React.createElement('div', {
+  #         className: \`animate-\${animationName}\`,
+  #         style: { animationDuration: \`\${duration}ms\`, animationTimingFunction: easing }
+  #       }, children);
+  #     }
+  #   description: "Adds CSS animations to any element"
+  #   example: '<div animate="fadeIn" duration={500}>Hello</div>'
+  #   tags: ["animation", "css", "ui"]
+  #   returns: "React element with animation classes"
+  #
+  # - name: "store"
+  #   id: "blk_custom_def456"
+  #   value: "__custom_store__"
+  #   type: "state"
+  #   syntax: "store={key}"
+  #   dependencies: ["zustand"]
+  #   preload: |
+  #     import { create } from 'zustand';
+  #     const useStore = create((set) => ({ data: null, setData: (d) => set({ data: d }) }));
+  #   function: |
+  #     function store(key, value, component) {
+  #       const { data, setData } = useStore();
+  #       if (value !== undefined) { setData(value); return null; }
+  #       return React.cloneElement(component, { data });
+  #     }
+  #   cleanup: |
+  #     useStore.destroy();
+  #   description: "Global state management using Zustand"
+  #   example: '<Store key="user"><UserProfile /></Store>'
+  #   tags: ["state", "store", "global"]
+  #
+  # - name: "query"
+  #   id: "blk_custom_ghi789"
+  #   value: "__custom_query__"
+  #   type: "async"
+  #   syntax: "query={queryString}"
+  #   dependencies: ["@tanstack/react-query"]
+  #   function: |
+  #     import { useQuery } from '@tanstack/react-query';
+  #     function query(queryKey, queryFn, children) {
+  #       const { data, isLoading, error } = useQuery({ queryKey: [queryKey], queryFn });
+  #       if (isLoading) return React.createElement('div', null, 'Loading...');
+  #       if (error) return React.createElement('div', null, 'Error: ' + error.message);
+  #       return typeof children === 'function' ? children(data) : children;
+  #     }
+  #   description: "React Query data fetching block"
+  #   example: '<Query query="users" fn={fetchUsers}>{(data) => <UserList users={data} />}</Query>'
+  #   tags: ["data", "fetch", "async", "query"]
+  #
+  # - name: "portal"
+  #   id: "blk_custom_jkl012"
+  #   value: "__custom_portal__"
+  #   type: "component"
+  #   syntax: "portal={selector}"
+  #   function: |
+  #     import { createPortal } from 'react-dom';
+  #     function portal(selector, children) {
+  #       const element = document.querySelector(selector);
+  #       return element ? createPortal(children, element) : children;
+  #     }
+  #   description: "Portals content to a different DOM node"
+  #   example: '<Portal portal="#modal-root"><Modal /></Portal>'
+  #   tags: ["portal", "dom", "teleport"]
+  #
+  # - name: "lazy"
+  #   id: "blk_custom_mno345"
+  #   value: "__custom_lazy__"
+  #   type: "component"
+  #   syntax: "lazy={importPath}"
+  #   function: |
+  #     import { lazy, Suspense } from 'react';
+  #     function lazy(importPath, fallback = null) {
+  #       const Component = lazy(() => import(importPath));
+  #       return React.createElement(Suspense, { fallback: fallback || React.createElement('div', null, 'Loading...') }, React.createElement(Component));
+  #     }
+  #   description: "Code-splitting with React.lazy"
+  #   example: '<Lazy lazy="./HeavyComponent" fallback={<Spinner />} />'
+  #   tags: ["lazy", "code-splitting", "performance"]
+  #
+  # - name: "errorBoundary"
+  #   id: "blk_custom_pqr678"
+  #   value: "__custom_errorBoundary__"
+  #   type: "component"
+  #   syntax: "errorBoundary={fallbackComponent}"
+  #   function: |
+  #     class ErrorBoundary extends React.Component {
+  #       constructor(props) { super(props); this.state = { hasError: false, error: null }; }
+  #       static getDerivedStateFromError(error) { return { hasError: true, error }; }
+  #       componentDidCatch(error, errorInfo) { console.error('Error caught:', error, errorInfo); }
+  #       render() {
+  #         if (this.state.hasError) {
+  #           return this.props.fallback || React.createElement('div', null, 'Something went wrong');
+  #         }
+  #         return this.props.children;
+  #       }
+  #     }
+  #     function errorBoundary(fallback, children) {
+  #       return React.createElement(ErrorBoundary, { fallback }, children);
+  #     }
+  #   description: "Error boundary for catching component errors"
+  #   example: '<ErrorBoundary fallback={<ErrorPage />}><App /></ErrorBoundary>'
+  #   tags: ["error", "boundary", "error-handling"]
+  #
+  # - name: "memo"
+  #   id: "blk_custom_stu901"
+  #   value: "__custom_memo__"
+  #   type: "transform"
+  #   syntax: "memo={dependencies}"
+  #   function: |
+  #     import { memo, useMemo } from 'react';
+  #     function memo(component, dependencies = []) {
+  #       return memo(component, (prev, next) => {
+  #         return dependencies.every(dep => prev[dep] === next[dep]);
+  #       });
+  #     }
+  #   description: "Memoizes components to prevent unnecessary re-renders"
+  #   example: '<Memo memo={["data"]}><ExpensiveComponent data={data} /></Memo>'
+  #   tags: ["memo", "performance", "optimization"]
+  #
+  # Users can add unlimited custom blocks following the pattern above
+  # Use 'clj gen New L <name>' to generate a new block template
+# ============================================================
+# SERVER-SIDE MODE CONFIGURATION
+# ============================================================
+serverSide:
+  # Memory limits
+  memoryLimitMB: 256
+  
+  # Tunnel configuration
+  publicTunnel: true
+  tunnelSubdomain: ""
+  tunnelRegion: "us"
+  
+  # Netlify deployment
+  netlifyExport: true
+  netlifyFunctionPath: "./netlify/functions"
+  
+  # WebSocket configuration
+  websocket:
+    enabled: true
+    path: "/ws"
+    perMessageDeflate: true
+    maxPayload: 1048576
+  
+  # RPC configuration
+  rpc:
+    enabled: true
+    maxCallDepth: 5
+    timeout: 30000
+    serialization: "json"  # json, msgpack, protobuf
+
+# ============================================================
+# BUILD CONFIGURATION
+# ============================================================
+build:
+  # Output directories
+  output:
+    client: "./dist/client"
+    server: "./dist/server"
+    serverSide: "./dist/server-side"
+  
+  # Minification
+  minify:
+    enabled: true
+    keepClassNames: false
+    keepFnNames: false
+  
+  # Source maps
+  sourceMaps: true
+  
+  # Tree shaking
+  treeShaking: true
+  
+  # Code splitting
+  codeSplitting: false
+  chunkSize: 244  # KB
+  
+  # Asset handling
+  assets:
+    images: true
+    fonts: true
+    css: true
+  
+  # Optimization
+  optimization:
+    concatenateModules: true
+    sideEffects: true
+    usedExports: true
+  
+  # External dependencies
+  external: []
+  
+  # Aliases
+  aliases:
+    "@": "./src"
+    "@components": "./src/components"
+    "@utils": "./src/utils"
+    "@api": "./src/api"
+
+# ============================================================
+# DEVELOPMENT CONFIGURATION
+# ============================================================
+development:
+  # Hot reload
+  hotReload: true
+  hotReloadPort: 35729
+  
+  # Debug mode
+  debug: true
+  debugPort: 9229
+  
+  # Watcher settings
+  watcher:
+    enabled: true
+    ignored: ["node_modules", "dist", "logs"]
+    interval: 100
+    usePolling: false
+  
+  # Mock data
+  mocks:
+    enabled: false
+    directory: "./mocks"
+  
+  # Test runner
+  testing:
+    enabled: true
+    framework: "jest"  # jest, mocha, vitest
+    testMatch: ["**/*.test.js", "**/*.spec.js"]
+    coverage: true
+    coverageDirectory: "./coverage"
+
+# ============================================================
+# DEPLOYMENT CONFIGURATION
+# ============================================================
+deployment:
+  # Platform targets
+  platforms:
+    netlify: true
+    vercel: false
+    aws: false
+    docker: false
+  
+  # Environment variables
+  env:
+    production: "./.env.production"
+    staging: "./.env.staging"
+    development: "./.env.development"
+  
+  # CI/CD settings
+  ci:
+    provider: "github_actions"  # github_actions, gitlab_ci, circleci, jenkins
+    beforeBuild: []
+    afterBuild: []
+    artifacts: ["./dist"]
+  
+  # Rollback settings
+  rollback:
+    enabled: true
+    keepVersions: 5
+
+# ============================================================
+# MONITORING CONFIGURATION
+# ============================================================
+monitoring:
+  # Health checks
+  health:
+    enabled: true
+    path: "/health"
+    details: true
+    interval: 30000
+  
+  # Metrics
+  metrics:
+    enabled: true
+    path: "/metrics"
+    prometheus: true
+  
+  # Alerts
+  alerts:
+    enabled: false
+    webhook: ""
+    conditions:
+      cpu: 80  # percent
+      memory: 80  # percent
+      errorRate: 5  # percent
+  
+  # APM (Application Performance Monitoring)
+  apm:
+    enabled: false
+    provider: "newrelic"  # newrelic, datadog, elastic
+    appName: "clientlite"
+    licenseKey: ""
+
+# ============================================================
+# SECURITY CONFIGURATION
+# ============================================================
+security:
+  # Encryption
+  encryption:
+    algorithm: "aes-256-gcm"
+    keyDerivation: "pbkdf2"
+    iterations: 100000
+  
+  # Session management
+  session:
+    enabled: true
+    secret: ""
+    resave: false
+    saveUninitialized: false
+    cookie:
+      secure: true
+      httpOnly: true
+      maxAge: 86400000  # 24 hours
+      sameSite: "lax"
+  
+  # CSRF protection
+  csrf:
+    enabled: true
+    cookie: true
+    ignoreMethods: ["GET", "HEAD", "OPTIONS"]
+  
+  # Input validation
+  validation:
+    enabled: true
+    sanitize: true
+    maxBodySize: "1mb"
+  
+  # SQL injection prevention
+  sqlInjection: true
+  
+  # XSS prevention
+  xssPrevention: true
+
+# ============================================================
+# NOTIFICATION CONFIGURATION
+# ============================================================
+notifications:
+  # Email
+  email:
+    enabled: false
+    smtp:
+      host: "smtp.gmail.com"
+      port: 587
+      secure: false
+      auth:
+        user: ""
+        pass: ""
+    from: "noreply@clientlite.com"
+  
+  # Slack
+  slack:
+    enabled: false
+    webhook: ""
+    channel: "#alerts"
+  
+  # Discord
+  discord:
+    enabled: false
+    webhook: ""
+  
+  # Web push
+  webPush:
+    enabled: false
+    vapidKeys:
+      publicKey: ""
+      privateKey: ""
+
+# ============================================================
+# BACKUP CONFIGURATION
+# ============================================================
+backup:
+  enabled: false
+  schedule: "0 2 * * *"  # 2 AM daily
+  retention: 7  # days
+  location: "./backups"
+  compress: true
+  encrypt: false
+
+# ============================================================
+# CUSTOM PLUGINS
+# ============================================================
+plugins: []
+
+# ============================================================
+# FEATURE FLAGS
+# ============================================================
+features:
+  experimental:
+    webgpu: false
+    webtransport: false
+    webcodecs: false
+  beta:
+    aiIntegration: false
+    edgeComputing: false
+
+# ============================================================
+# INTEGRATION CONFIGURATION
+# ============================================================
+integrations:
+  # Stripe payment
+  stripe:
+    enabled: false
+    secretKey: ""
+    webhookSecret: ""
+  
+  # SendGrid email
+  sendgrid:
+    enabled: false
+    apiKey: ""
+  
+  # AWS services
+  aws:
+    enabled: false
+    region: "us-east-1"
+    accessKeyId: ""
+    secretAccessKey: ""
+    services:
+      s3: false
+      sqs: false
+      sns: false
+      lambda: false
+  
+  # Google services
+  google:
+    enabled: false
+    clientId: ""
+    clientSecret: ""
+    services:
+      analytics: false
+      cloudStorage: false
+      firebase: false
+
+# ============================================================
+# SYSTEM METRICS
+# ============================================================
+system:
+  # Auto-scaling
+  autoScale:
+    enabled: false
+    minInstances: 1
+    maxInstances: 10
+    scaleUpThreshold: 70  # CPU percentage
+    scaleDownThreshold: 30
+  
+  # Load balancing
+  loadBalancing:
+    enabled: false
+    algorithm: "round-robin"  # round-robin, least-connections, ip-hash
+    healthCheck: true
+    healthCheckInterval: 10000
+
+# ============================================================
+# SYSTEM INFO (READ-ONLY - Auto-populated)
+# ============================================================
+systemInfo:
+  platform: "${os.platform()}"
+  arch: "${os.arch()}"
+  cpus: ${os.cpus().length}
+  totalMemory: ${os.totalmem()}
+  freeMemory: ${os.freemem()}
+  nodeVersion: "${process.version}"
+  hostname: "${os.hostname()}"
+`;
+
+  fs.writeFileSync(targetPath, template, 'utf8');
+  const config = yaml.load(template);
+  if (config.serverSide && config.serverSide.memoryLimitMB) {
+    enforceMemoryLimit(config.serverSide.memoryLimitMB);
+  }
+}
+
+async function addLanguageBlock(name, id) {
+  const configPath = path.join(process.cwd(), 'CLJ.Config');
+  if (!fs.existsSync(configPath)) await initConfig();
+  const config = yaml.load(fs.readFileSync(configPath, 'utf8'));
+  if (!config.languageBlocks) config.languageBlocks = [];
+  config.languageBlocks.push({
+    name,
+    id,
+    value: `__custom_${name}__`,
+    function: `function ${name}(...args) { console.log("[CLJ custom]", args); return args; }`
+  });
+  fs.writeFileSync(configPath, yaml.dump(config), 'utf8');
+}
+
+function ensureTemplates() {
+  const templatesDir = path.join(__dirname, '..', 'templates');
+  if (!fs.existsSync(templatesDir)) fs.mkdirSync(templatesDir, { recursive: true });
+  
+  const netlifyToml = path.join(templatesDir, 'netlify.toml');
+  if (!fs.existsSync(netlifyToml)) {
+    fs.writeFileSync(netlifyToml, `[build]
+  command = "clj run server-side"
+  functions = "netlify/functions"
+[functions]
+  node_bundler = "esbuild"
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+`);
+  }
+  
+  const defaultConfig = path.join(templatesDir, 'defaultConfig.yml');
+  const cljConfigPath = path.join(process.cwd(), 'CLJ.Config');
+  if (!fs.existsSync(defaultConfig) && fs.existsSync(cljConfigPath)) {
+    fs.writeFileSync(defaultConfig, fs.readFileSync(cljConfigPath, 'utf8'));
+  } else if (!fs.existsSync(defaultConfig)) {
+    fs.writeFileSync(defaultConfig, `# ClientLite Default Configuration
+api:
+  baseDir: "./api"
+  autoIndex: true
+languageBlocks: []
+serverSide:
+  memoryLimitMB: 256
+  publicTunnel: true
+  netlifyExport: true
+`);
+  }
+}
+
+module.exports = { 
+  generateId, 
+  initConfig, 
+  addLanguageBlock, 
+  ensureTemplates, 
+  enforceMemoryLimit,
+  getSystemInfo
+};
