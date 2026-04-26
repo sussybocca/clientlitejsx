@@ -1,0 +1,43 @@
+{
+  "name": "advancedModule",
+  "version": "2.0.0",
+  "exports": [
+    "greet",
+    "calculate",
+    "processData",
+    "createDatabase",
+    "handleRequest",
+    "generateReport",
+    "encryptData",
+    "analyzeFile",
+    "streamProcess",
+    "cacheManager",
+    "rateLimiter",
+    "validationPipeline",
+    "dataTransformer",
+    "eventBus",
+    "scheduler"
+  ],
+  "permissions": ["fs", "path", "vm"],
+  "main": "index.js",
+  "config": {
+    "maxCacheSize": 1000,
+    "rateLimitPerMinute": 60,
+    "logLevel": "debug",
+    "database": {
+      "type": "json",
+      "path": "./data"
+    }
+  },
+  "middleware": [
+    "logger",
+    "errorHandler",
+    "performanceMonitor"
+  ],
+  "hooks": {
+    "beforeInit": true,
+    "afterInit": true,
+    "onError": true,
+    "onShutdown": true
+  }
+}
