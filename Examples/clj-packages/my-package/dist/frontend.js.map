@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/index.js"],
+  "sourcesContent": ["// CLJ Package: my-package\nexport const frontend = {\n  greet: (name) => `Hello ${name} from frontend`,\n  setStorage: (key, val) => localStorage.setItem(key, JSON.stringify(val)),\n  getStorage: (key) => JSON.parse(localStorage.getItem(key))\n};\nexport const backend = {\n  greet: (name) => `Hello ${name} from backend`,\n  storage: new Map(),\n  setStorage: (key, val) => { backend.storage.set(key, val); return true; },\n  getStorage: (key) => backend.storage.get(key),\n  createDatabase: async (dbName) => {\n    const sqlite3 = await import('sqlite3');\n    return new sqlite3.Database(dbName + '.db');\n  }\n};\nexport default { frontend, backend };"],
+  "mappings": "k0BAAA,IAAAA,EAAA,GAAAC,EAAAD,EAAA,aAAAE,EAAA,YAAAC,EAAA,aAAAC,IACO,IAAMA,EAAW,CACtB,MAAQC,GAAS,SAASA,CAAI,iBAC9B,WAAY,CAACC,EAAKC,IAAQ,aAAa,QAAQD,EAAK,KAAK,UAAUC,CAAG,CAAC,EACvE,WAAaD,GAAQ,KAAK,MAAM,aAAa,QAAQA,CAAG,CAAC,CAC3D,EACaJ,EAAU,CACrB,MAAQG,GAAS,SAASA,CAAI,gBAC9B,QAAS,IAAI,IACb,WAAY,CAACC,EAAKC,KAAUL,EAAQ,QAAQ,IAAII,EAAKC,CAAG,EAAU,IAClE,WAAaD,GAAQJ,EAAQ,QAAQ,IAAII,CAAG,EAC5C,eAAgB,MAAOE,GAAW,CAChC,IAAMC,EAAU,KAAM,QAAO,SAAS,EACtC,OAAO,IAAIA,EAAQ,SAASD,EAAS,KAAK,CAC5C,CACF,EACOL,EAAQ,CAAE,SAAAC,EAAU,QAAAF,CAAQ",
+  "names": ["src_exports", "__export", "backend", "src_default", "frontend", "name", "key", "val", "dbName", "sqlite3"]
+}
