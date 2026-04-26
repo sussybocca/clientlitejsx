@@ -1682,28 +1682,7 @@ class CLJAnimationEngine {
   }
   window.CLJ.VideoPlayer = CLJVideoPlayer;
 
-  // ---------- Markdown Renderer ----------
-  class CLJMarkdown {
-    static render(markdown) {
-      let html = markdown;
-      html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-      html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-      html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-      html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-      html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
-      html = html.replace(/^\s*-\s(.*$)/gm, '<li>$1</li>');
-      html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-      html = html.replace(/^\d+\.\s(.*$)/gm, '<li>$1</li>');
-      html = html.replace(/\n/g, '<br>');
-      return html;
-    }
-    static renderToElement(container, markdown) {
-      const el = typeof container === 'string' ? document.querySelector(container) : container;
-      if (el) el.innerHTML = this.render(markdown);
-    }
-  }
-  window.CLJ.Markdown = CLJMarkdown;
+
 
   // ---------- Code Editor (basic) ----------
   class CLJCodeEditor {
@@ -1994,49 +1973,53 @@ class CLJAnimationEngine {
   window.CLJ.Chart = CLJChart;
 
   // ---------- Drag & Drop ----------
-  class CLJDragDrop {
-    constructor(options = {}) {
-      this.dragClass = options.dragClass || 'clj-draggable';
-      this.dropClass = options.dropClass || 'clj-dropzone';
-      this.onDragStart = options.onDragStart || null;
-      this.onDragEnd = options.onDragEnd || null;
-      this.onDrop = options.onDrop || null;
-      this.init();
-    }
-    init() {
-      document.addEventListener('dragstart', (e) => {
-        const el = e.target.closest('.' + this.dragClass);
-        if (el) {
-          e.dataTransfer.setData('text/plain', el.getAttribute('data-id') || el.id || '');
-          if (this.onDragStart) this.onDragStart(el, e);
-          el.classList.add('clj-dragging');
-        }
-      });
-      document.addEventListener('dragend', (e) => {
-        document.querySelectorAll('.clj-dragging').forEach(function(el) { el.classList.remove('clj-dragging'); });
-        if (this.onDragEnd) this.onDragEnd(e);
-      }.bind(this));
-      document.addEventListener('dragover', (e) => {
-        const dropzone = e.target.closest('.' + this.dropClass);
-        if (dropzone) { e.preventDefault(); dropzone.classList.add('clj-drag-over'); }
-      });
-      document.addEventListener('dragleave', (e) => {
-        const dropzone = e.target.closest('.' + this.dropClass);
-        if (dropzone) dropzone.classList.remove('clj-drag-over');
-      });
-      document.addEventListener('drop', (e) => {
-        const dropzone = e.target.closest('.' + this.dropClass);
-        if (dropzone) {
-          e.preventDefault();
-          dropzone.classList.remove('clj-drag-over');
-          const data = e.dataTransfer.getData('text/plain');
-          const draggedEl = document.querySelector('.' + this.dragClass + '[data-id="' + data + '"], .' + this.dragClass + '#' + data);
-          if (this.onDrop) this.onDrop(draggedEl, dropzone, e);
-        }
-      });
-    }
+class CLJDragDrop {
+  constructor(options = {}) {
+    this.dragClass = options.dragClass || 'clj-draggable';
+    this.dropClass = options.dropClass || 'clj-dropzone';
+    this.onDragStart = options.onDragStart || null;
+    this.onDragEnd = options.onDragEnd || null;
+    this.onDrop = options.onDrop || null;
+    this.init();
   }
-  window.CLJ.DragDrop = CLJDragDrop;
+  init() {
+    const self = this;
+    document.addEventListener('dragstart', (e) => {
+      const el = e.target.closest('.' + self.dragClass);
+      if (el) {
+        e.dataTransfer.setData('text/plain', el.getAttribute('data-id') || el.id || '');
+        if (self.onDragStart) self.onDragStart(el, e);
+        el.classList.add('clj-dragging');
+      }
+    });
+    document.addEventListener('dragend', (e) => {
+      document.querySelectorAll('.clj-dragging').forEach((el) => { el.classList.remove('clj-dragging'); });
+      if (self.onDragEnd) self.onDragEnd(e);
+    });
+    document.addEventListener('dragover', (e) => {
+      const dropzone = e.target.closest('.' + self.dropClass);
+      if (dropzone) {
+        e.preventDefault();
+        dropzone.classList.add('clj-drag-over');
+      }
+    });
+    document.addEventListener('dragleave', (e) => {
+      const dropzone = e.target.closest('.' + self.dropClass);
+      if (dropzone) dropzone.classList.remove('clj-drag-over');
+    });
+    document.addEventListener('drop', (e) => {
+      const dropzone = e.target.closest('.' + self.dropClass);
+      if (dropzone) {
+        e.preventDefault();
+        dropzone.classList.remove('clj-drag-over');
+        const data = e.dataTransfer.getData('text/plain');
+        const draggedEl = document.querySelector('.' + self.dragClass + '[data-id="' + data + '"], .' + self.dragClass + '#' + data);
+        if (self.onDrop) self.onDrop(draggedEl, dropzone, e);
+      }
+    });
+  }
+}
+window.CLJ.DragDrop = CLJDragDrop;
 
   // ---------- Virtual List ----------
   class CLJVirtualList {
