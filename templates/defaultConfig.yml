@@ -1,0 +1,9 @@
+# ClientLite Default Configuration
+api:
+  baseDir: "./api"
+  autoIndex: true
+languageBlocks: []
+serverSide:
+  memoryLimitMB: 256
+  publicTunnel: true
+  netlifyExport: true
