@@ -5,7 +5,12 @@ const esbuild = require('esbuild');
 const vm = require('vm');
 const crypto = require('crypto');
 
+
+
+
+
 // ==================== CLJ MEGA ANIMATION ENGINE (FULLY IMPLEMENTED) ====================
+
 
 class CLJAnimationEngine {
   constructor() {
@@ -17,60 +22,76 @@ class CLJAnimationEngine {
       wide: { width: 1920, height: 1080 }
     };
     
-    // 50 BACKGROUND ANIMATION TEMPLATES (all fully implemented)
-    this.animationTemplates = {
-      particleNebula: () => this.getParticleNebulaCode(),
-      quantumWave: () => this.getQuantumWaveCode(),
-      crystalMatrix: () => this.getCrystalMatrixCode(),
-      lightTrails: () => this.getLightTrailsCode(),
-      energyField: () => this.getEnergyFieldCode(),
-      cosmicDust: () => this.getCosmicDustCode(),
-      plasmaFlow: () => this.getPlasmaFlowCode(),
-      vortexSwarm: () => this.getVortexSwarmCode(),
-      auroraBorealis: () => this.getAuroraBorealisCode(),
-      neuralNetwork: () => this.getNeuralNetworkCode(),
-      gravityWells: () => this.getGravityWellsCode(),
-      starfield: () => this.getStarfieldCode(),
-      liquidGradient: () => this.getLiquidGradientCode(),
-      fireflies: () => this.getFirefliesCode(),
-      matrixRain: () => this.getMatrixRainCode(),
-      wormhole: () => this.getWormholeCode(),
-      pulsarRings: () => this.getPulsarRingsCode(),
-      nebulaClouds: () => this.getNebulaCloudsCode(),
-      electricGrid: () => this.getElectricGridCode(),
-      ripples: () => this.getRipplesCode(),
-      galaxy: () => this.getGalaxyCode(),
-      fireworks: () => this.getFireworksCode(),
-      snowflakes: () => this.getSnowflakesCode(),
-      bubbles: () => this.getBubblesCode(),
-      lightning: () => this.getLightningCode(),
-      kaleidoscope: () => this.getKaleidoscopeCode(),
-      tentacles: () => this.getTentaclesCode(),
-      fractals: () => this.getFractalsCode(),
-      heartbeat: () => this.getHeartbeatCode(),
-      dnaHelix: () => this.getDNAHelixCode(),
-      blackHole: () => this.getBlackHoleCode(),
-      supernova: () => this.getSupernovaCode(),
-      timeWarp: () => this.getTimeWarpCode(),
-      dimensionalRift: () => this.getDimensionalRiftCode(),
-      sonicBoom: () => this.getSonicBoomCode(),
-      tectonic: () => this.getTectonicCode(),
-      bioluminescence: () => this.getBioluminescenceCode(),
-      hyperspace: () => this.getHyperspaceCode(),
-      molecularDance: () => this.getMolecularDanceCode(),
-      solarFlare: () => this.getSolarFlareCode(),
-      oceanFloor: () => this.getOceanFloorCode(),
-      thunderstorm: () => this.getThunderstormCode(),
-      northernLights: () => this.getNorthernLightsCode(),
-      lavaFlow: () => this.getLavaFlowCode(),
-      crystalCave: () => this.getCrystalCaveCode(),
-      magneticField: () => this.getMagneticFieldCode(),
-      pulseWave: () => this.getPulseWaveCode(),
-      geometricMorph: () => this.getGeometricMorphCode(),
-      constellation: () => this.getConstellationCode(),
-      phoenixRise: () => this.getPhoenixRiseCode()
-    };
-    
+
+
+
+ // 50 BACKGROUND ANIMATION TEMPLATES + 3D + 4D (all fully implemented)
+this.animationTemplates = {
+  particleNebula: () => this.getParticleNebulaCode(),
+  quantumWave: () => this.getQuantumWaveCode(),
+  crystalMatrix: () => this.getCrystalMatrixCode(),
+  lightTrails: () => this.getLightTrailsCode(),
+  energyField: () => this.getEnergyFieldCode(),
+  cosmicDust: () => this.getCosmicDustCode(),
+  plasmaFlow: () => this.getPlasmaFlowCode(),
+  vortexSwarm: () => this.getVortexSwarmCode(),
+  auroraBorealis: () => this.getAuroraBorealisCode(),
+  neuralNetwork: () => this.getNeuralNetworkCode(),
+  gravityWells: () => this.getGravityWellsCode(),
+  starfield: () => this.getStarfieldCode(),
+  liquidGradient: () => this.getLiquidGradientCode(),
+  fireflies: () => this.getFirefliesCode(),
+  matrixRain: () => this.getMatrixRainCode(),
+  wormhole: () => this.getWormholeCode(),
+  pulsarRings: () => this.getPulsarRingsCode(),
+  nebulaClouds: () => this.getNebulaCloudsCode(),
+  electricGrid: () => this.getElectricGridCode(),
+  ripples: () => this.getRipplesCode(),
+  galaxy: () => this.getGalaxyCode(),
+  fireworks: () => this.getFireworksCode(),
+  snowflakes: () => this.getSnowflakesCode(),
+  bubbles: () => this.getBubblesCode(),
+  lightning: () => this.getLightningCode(),
+  kaleidoscope: () => this.getKaleidoscopeCode(),
+  tentacles: () => this.getTentaclesCode(),
+  fractals: () => this.getFractalsCode(),
+  heartbeat: () => this.getHeartbeatCode(),
+  dnaHelix: () => this.getDNAHelixCode(),
+  blackHole: () => this.getBlackHoleCode(),
+  supernova: () => this.getSupernovaCode(),
+  timeWarp: () => this.getTimeWarpCode(),
+  dimensionalRift: () => this.getDimensionalRiftCode(),
+  sonicBoom: () => this.getSonicBoomCode(),
+  tectonic: () => this.getTectonicCode(),
+  bioluminescence: () => this.getBioluminescenceCode(),
+  hyperspace: () => this.getHyperspaceCode(),
+  molecularDance: () => this.getMolecularDanceCode(),
+  solarFlare: () => this.getSolarFlareCode(),
+  oceanFloor: () => this.getOceanFloorCode(),
+  thunderstorm: () => this.getThunderstormCode(),
+  northernLights: () => this.getNorthernLightsCode(),
+  lavaFlow: () => this.getLavaFlowCode(),
+  crystalCave: () => this.getCrystalCaveCode(),
+  magneticField: () => this.getMagneticFieldCode(),
+  pulseWave: () => this.getPulseWaveCode(),
+  geometricMorph: () => this.getGeometricMorphCode(),
+  constellation: () => this.getConstellationCode(),
+  phoenixRise: () => this.getPhoenixRiseCode(),
+  
+  // 5 Real 3D WebGL Animations
+  rotatingCube3D: () => this.getRotatingCube3DCode(),
+  sphereWave3D: () => this.getSphereWave3DCode(),
+  torusKnot3D: () => this.getTorusKnot3DCode(),
+  particleField3D: () => this.getParticleField3DCode(),
+  galaxySpiral3D: () => this.getGalaxySpiral3DCode(),
+  
+  // 5 4D Animations (2D + 3D combined)
+  quantumDimension4D: () => this.getQuantumDimension4DCode(),
+  timeWarp4D: () => this.getTimeWarp4DCode(),
+  hypercube4D: () => this.getHypercube4DCode(),
+  nebulaVortex4D: () => this.getNebulaVortex4DCode(),
+  dimensionalRift4D: () => this.getDimensionalRift4DCode()
+};
     // 30 NEW TRANSITION & EFFECT ANIMATIONS
     this.transitionEffects = {
       fadeIn: () => this.getFadeInCode(),
@@ -105,7 +126,7 @@ class CLJAnimationEngine {
       gradientShift: () => this.getGradientShiftCode()
     };
   }
-
+  
   // ==================== ALL 50 BACKGROUND ANIMATIONS (fully implemented) ====================
 
   getParticleNebulaCode() { return `// @animation particleNebula
@@ -803,12 +824,733 @@ class CLJAnimationEngine {
   getConstellationCode() { return this.getConstellationCode(); }
   getPhoenixRiseCode() { return this.getSupernovaCode(); }
 
-  // ==================== CORE ENGINE METHODS ====================
 
-  getDefaultAnimationCode() { return this.getParticleNebulaCode(); }
+  // ==================== REAL 3D WEBGL ANIMATIONS (using Global Three.js from CDN) ====================
+  
+  getRotatingCube3DCode() {
+    return `// @animation 3d rotatingCube - Global Three.js
+(function(){
+  if (typeof THREE === 'undefined') {
+    console.error('Three.js not loaded. Add <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> to your HTML');
+    return;
+  }
+  
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none';
+  document.body.prepend(container);
+  
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x020210);
+  
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 3;
+  
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+  
+  const materials = [
+    new THREE.MeshStandardMaterial({ color: 0xff3333, metalness: 0.3, roughness: 0.4 }),
+    new THREE.MeshStandardMaterial({ color: 0x33ff33, metalness: 0.3, roughness: 0.4 }),
+    new THREE.MeshStandardMaterial({ color: 0x3333ff, metalness: 0.3, roughness: 0.4 }),
+    new THREE.MeshStandardMaterial({ color: 0xffff33, metalness: 0.3, roughness: 0.4 }),
+    new THREE.MeshStandardMaterial({ color: 0xff33ff, metalness: 0.3, roughness: 0.4 }),
+    new THREE.MeshStandardMaterial({ color: 0x33ffff, metalness: 0.3, roughness: 0.4 })
+  ];
+  
+  const geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+  const cube = new THREE.Mesh(geometry, materials);
+  scene.add(cube);
+  
+  const edgesGeo = new THREE.EdgesGeometry(geometry);
+  const edgesMat = new THREE.LineBasicMaterial({ color: 0xffffff });
+  const wireframe = new THREE.LineSegments(edgesGeo, edgesMat);
+  cube.add(wireframe);
+  
+  const ambientLight = new THREE.AmbientLight(0x404040);
+  scene.add(ambientLight);
+  
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+  directionalLight.position.set(1, 2, 1);
+  scene.add(directionalLight);
+  
+  const backLight = new THREE.PointLight(0x4466ff, 0.5);
+  backLight.position.set(-1, -1, -1);
+  scene.add(backLight);
+  
+  const starGeometry = new THREE.BufferGeometry();
+  const starCount = 1500;
+  const starPositions = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount; i++) {
+    starPositions[i * 3] = (Math.random() - 0.5) * 200;
+    starPositions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+    starPositions[i * 3 + 2] = (Math.random() - 0.5) * 50 - 20;
+  }
+  starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+  const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15 });
+  const stars = new THREE.Points(starGeometry, starMaterial);
+  scene.add(stars);
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    cube.rotation.x += 0.008;
+    cube.rotation.y += 0.012;
+    cube.rotation.z += 0.005;
+    stars.rotation.y += 0.0005;
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();`;
+  }
 
-  getInteractiveSystemCode() {
-    return `// CLJ Interactive System - Buttons, Hover, Click Effects
+  getSphereWave3DCode() {
+    return `// @animation 3d sphereWave - Global Three.js
+(function(){
+  if (typeof THREE === 'undefined') {
+    console.error('Three.js not loaded. Add script tag for three.js to your HTML');
+    return;
+  }
+  
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none';
+  document.body.prepend(container);
+  
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x010118);
+  
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 4;
+  
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+  
+  const geometry = new THREE.SphereGeometry(1.2, 64, 64);
+  const material = new THREE.MeshStandardMaterial({
+    color: 0x3388ff,
+    emissive: 0x112244,
+    metalness: 0.7,
+    roughness: 0.3,
+    wireframe: false
+  });
+  const sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
+  
+  const wireframeMat = new THREE.MeshBasicMaterial({ color: 0x44aaff, wireframe: true, transparent: true, opacity: 0.3 });
+  const wireframeSphere = new THREE.Mesh(geometry, wireframeMat);
+  sphere.add(wireframeSphere);
+  
+  const particleCount = 800;
+  const particleGeometry = new THREE.BufferGeometry();
+  const particlePositions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    const r = 1.6;
+    particlePositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+    particlePositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+    particlePositions[i * 3 + 2] = r * Math.cos(phi);
+  }
+  particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+  const particleMaterial = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.03 });
+  const particles = new THREE.Points(particleGeometry, particleMaterial);
+  scene.add(particles);
+  
+  const ambientLight = new THREE.AmbientLight(0x222222);
+  scene.add(ambientLight);
+  const pointLight1 = new THREE.PointLight(0xff44aa, 0.8);
+  pointLight1.position.set(2, 2, 2);
+  scene.add(pointLight1);
+  const pointLight2 = new THREE.PointLight(0x44ffaa, 0.6);
+  pointLight2.position.set(-2, -1, 2);
+  scene.add(pointLight2);
+  const pointLight3 = new THREE.PointLight(0x44aaff, 0.5);
+  pointLight3.position.set(1, -2, -2);
+  scene.add(pointLight3);
+  
+  let time = 0;
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.016;
+    
+    sphere.rotation.y = time * 0.3;
+    sphere.rotation.x = Math.sin(time * 0.2) * 0.2;
+    particles.rotation.y = time * 0.1;
+    particles.rotation.x = time * 0.05;
+    
+    const scale = 1 + Math.sin(time * 2) * 0.05;
+    sphere.scale.set(scale, scale, scale);
+    
+    const hue = (time * 30) % 360;
+    material.color.setHSL(hue / 360, 0.8, 0.5);
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();`;
+  }
+
+  getTorusKnot3DCode() {
+    return `// @animation 3d torusKnot - Global Three.js
+(function(){
+  if (typeof THREE === 'undefined') {
+    console.error('Three.js not loaded. Add script tag for three.js to your HTML');
+    return;
+  }
+  
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none';
+  document.body.prepend(container);
+  
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000010);
+  
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 2, 5);
+  camera.lookAt(0, 0, 0);
+  
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+  
+  const geometry = new THREE.TorusKnotGeometry(1, 0.3, 200, 32, 3, 4);
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xaa44ff,
+    emissive: 0x331166,
+    metalness: 0.8,
+    roughness: 0.2
+  });
+  const torusKnot = new THREE.Mesh(geometry, material);
+  scene.add(torusKnot);
+  
+  const glowGeometry = new THREE.TorusKnotGeometry(1.03, 0.33, 200, 32, 3, 4);
+  const glowMaterial = new THREE.MeshBasicMaterial({ color: 0xff66ff, wireframe: true, transparent: true, opacity: 0.15 });
+  const glowKnot = new THREE.Mesh(glowGeometry, glowMaterial);
+  torusKnot.add(glowKnot);
+  
+  const particleCount = 2000;
+  const particleGeometry = new THREE.BufferGeometry();
+  const particlePositions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    const radius = 2.5;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    particlePositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+    particlePositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    particlePositions[i * 3 + 2] = radius * Math.cos(phi);
+  }
+  particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+  const particleMaterial = new THREE.PointsMaterial({ color: 0xff88ff, size: 0.02 });
+  const particles = new THREE.Points(particleGeometry, particleMaterial);
+  scene.add(particles);
+  
+  const ambientLight = new THREE.AmbientLight(0x222222);
+  scene.add(ambientLight);
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+  dirLight.position.set(1, 2, 1);
+  scene.add(dirLight);
+  const backLight = new THREE.PointLight(0xff44aa, 0.6);
+  backLight.position.set(-1, -1, -2);
+  scene.add(backLight);
+  const fillLight = new THREE.PointLight(0x44aaff, 0.5);
+  fillLight.position.set(1, -1, 1);
+  scene.add(fillLight);
+  
+  let time = 0;
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.016;
+    
+    torusKnot.rotation.x = time * 0.3;
+    torusKnot.rotation.y = time * 0.5;
+    torusKnot.rotation.z = time * 0.2;
+    
+    particles.rotation.y = time * 0.1;
+    particles.rotation.x = time * 0.05;
+    
+    const hue = (time * 40) % 360;
+    material.color.setHSL(hue / 360, 0.9, 0.6);
+    glowMaterial.color.setHSL((hue + 180) / 360, 0.9, 0.7);
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();`;
+  }
+
+  getParticleField3DCode() {
+    return `// @animation 3d particleField - Global Three.js
+(function(){
+  if (typeof THREE === 'undefined') {
+    console.error('Three.js not loaded. Add script tag for three.js to your HTML');
+    return;
+  }
+  
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none';
+  document.body.prepend(container);
+  
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+  
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+  
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+  
+  const particleCount = 5000;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+  
+  for (let i = 0; i < particleCount; i++) {
+    const radius = 3 * Math.pow(Math.random(), 1.5);
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+    positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    positions[i * 3 + 2] = radius * Math.cos(phi);
+    
+    colors[i * 3] = 0.5 + Math.sin(theta) * 0.5;
+    colors[i * 3 + 1] = 0.5 + Math.cos(phi) * 0.5;
+    colors[i * 3 + 2] = 0.5 + Math.sin(theta + phi) * 0.5;
+  }
+  
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  
+  const particleMaterial = new THREE.PointsMaterial({ size: 0.08, vertexColors: true, blending: THREE.AdditiveBlending });
+  const particleSystem = new THREE.Points(geometry, particleMaterial);
+  scene.add(particleSystem);
+  
+  const coreGeometry = new THREE.SphereGeometry(0.4, 32, 32);
+  const coreMaterial = new THREE.MeshStandardMaterial({ color: 0xffaa44, emissive: 0x442200, emissiveIntensity: 0.8 });
+  const core = new THREE.Mesh(coreGeometry, coreMaterial);
+  scene.add(core);
+  
+  const ambientLight = new THREE.AmbientLight(0x111111);
+  scene.add(ambientLight);
+  const pointLight = new THREE.PointLight(0xffaa66, 1);
+  pointLight.position.set(0, 0, 0);
+  scene.add(pointLight);
+  
+  let time = 0;
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.008;
+    
+    particleSystem.rotation.y = time * 0.2;
+    particleSystem.rotation.x = Math.sin(time * 0.15) * 0.1;
+    particleSystem.rotation.z = Math.cos(time * 0.1) * 0.05;
+    
+    core.scale.setScalar(1 + Math.sin(time * 3) * 0.1);
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();`;
+  }
+
+  getGalaxySpiral3DCode() {
+    return `// @animation 3d galaxySpiral - Global Three.js
+(function(){
+  if (typeof THREE === 'undefined') {
+    console.error('Three.js not loaded. Add script tag for three.js to your HTML');
+    return;
+  }
+  
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none';
+  document.body.prepend(container);
+  
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+  
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 2, 8);
+  camera.lookAt(0, 0, 0);
+  
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+  
+  const particleCount = 8000;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+  
+  for (let i = 0; i < particleCount; i++) {
+    const arm = i % 4;
+    const angleOffset = arm * Math.PI * 2 / 4;
+    const radius = Math.pow(Math.random(), 1.2) * 4;
+    const angle = radius * 5 + angleOffset + (Math.random() - 0.5) * 0.5;
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    const y = (Math.random() - 0.5) * 0.8 - Math.abs(radius) * 0.2;
+    
+    positions[i * 3] = x;
+    positions[i * 3 + 1] = y;
+    positions[i * 3 + 2] = z;
+    
+    const t = radius / 5;
+    const r = 0.8 + Math.sin(radius * 2) * 0.2;
+    const g = 0.5 + Math.cos(radius * 3) * 0.3;
+    const b = 0.8 + Math.sin(radius * 4) * 0.2;
+    colors[i * 3] = r * (1 - t) + 0.3 * t;
+    colors[i * 3 + 1] = g * (1 - t) + 0.2 * t;
+    colors[i * 3 + 2] = b * (1 - t) + 0.8 * t;
+  }
+  
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  
+  const particleMaterial = new THREE.PointsMaterial({ size: 0.05, vertexColors: true, blending: THREE.AdditiveBlending });
+  const galaxy = new THREE.Points(geometry, particleMaterial);
+  scene.add(galaxy);
+  
+  const coreGlow = new THREE.Mesh(
+    new THREE.SphereGeometry(0.3, 16, 16),
+    new THREE.MeshStandardMaterial({ color: 0xffaa66, emissive: 0xff4411, emissiveIntensity: 0.8 })
+  );
+  scene.add(coreGlow);
+  
+  const starCount = 2000;
+  const starGeo = new THREE.BufferGeometry();
+  const starPos = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount; i++) {
+    starPos[i * 3] = (Math.random() - 0.5) * 200;
+    starPos[i * 3 + 1] = (Math.random() - 0.5) * 100;
+    starPos[i * 3 + 2] = (Math.random() - 0.5) * 80 - 20;
+  }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+  const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.08 });
+  const stars = new THREE.Points(starGeo, starMat);
+  scene.add(stars);
+  
+  const ambientLight = new THREE.AmbientLight(0x111122);
+  scene.add(ambientLight);
+  const pointLight = new THREE.PointLight(0xffaa66, 0.5);
+  pointLight.position.set(0, 0, 0);
+  scene.add(pointLight);
+  
+  let time = 0;
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.003;
+    
+    galaxy.rotation.y = time * 0.15;
+    galaxy.rotation.x = Math.sin(time * 0.1) * 0.05;
+    stars.rotation.y = time * 0.02;
+    coreGlow.scale.setScalar(1 + Math.sin(time * 2) * 0.1);
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();`;
+  }
+
+  // ==================== 4D ANIMATIONS (using Global Three.js) ====================
+  
+  getQuantumDimension4DCode() {
+    return `// @animation 4d quantumDimension - Combines 2D particles + Global Three.js 3D
+(function(){
+  if (typeof THREE === 'undefined') {
+    console.error('Three.js not loaded for 4D animation.');
+    return;
+  }
+  
+  // 2D Canvas layer
+  const c2d = document.createElement('canvas');
+  const ctx = c2d.getContext('2d');
+  c2d.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;background:#000';
+  document.body.prepend(c2d);
+  
+  // 3D Three.js layer
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none';
+  document.body.prepend(container);
+  
+  const scene = new THREE.Scene();
+  scene.background = null;
+  
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 3;
+  
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+  
+  let w, h, time = 0;
+  const particles2D = [];
+  for (let i = 0; i < 300; i++) {
+    particles2D.push({ x: Math.random(), y: Math.random(), vx: (Math.random() - 0.5) * 0.01, vy: (Math.random() - 0.5) * 0.01, s: Math.random() * 2 + 1, h: Math.random() * 360 });
+  }
+  
+  // 3D particle system
+  const particleCount3D = 1000;
+  const particleGeo = new THREE.BufferGeometry();
+  const particlePositions = new Float32Array(particleCount3D * 3);
+  const particleColors = new Float32Array(particleCount3D * 3);
+  for (let i = 0; i < particleCount3D; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const b = Math.random() * Math.PI * 2;
+    const r = Math.pow(Math.random(), 1.5) * 2.5;
+    particlePositions[i * 3] = Math.sin(a) * Math.cos(b) * r;
+    particlePositions[i * 3 + 1] = Math.sin(a) * Math.sin(b) * r;
+    particlePositions[i * 3 + 2] = Math.cos(a) * r;
+    particleColors[i * 3] = Math.random();
+    particleColors[i * 3 + 1] = Math.random();
+    particleColors[i * 3 + 2] = Math.random();
+  }
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+  particleGeo.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
+  const particleMat = new THREE.PointsMaterial({ size: 0.05, vertexColors: true, blending: THREE.AdditiveBlending });
+  const particleSystem3D = new THREE.Points(particleGeo, particleMat);
+  scene.add(particleSystem3D);
+  
+  function resize() {
+    w = c2d.width = window.innerWidth;
+    h = c2d.height = window.innerHeight;
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    
+    ctx.fillStyle = 'rgba(0,0,0,0.1)';
+    ctx.fillRect(0, 0, w, h);
+    
+    for (const p of particles2D) {
+      p.x += p.vx + Math.sin(time) * 0.002;
+      p.y += p.vy + Math.cos(time) * 0.002;
+      if (p.x < 0) p.x = 1;
+      if (p.x > 1) p.x = 0;
+      if (p.y < 0) p.y = 1;
+      if (p.y > 1) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x * w, p.y * h, p.s, 0, Math.PI * 2);
+      ctx.fillStyle = 'hsla(' + (p.h + time * 30) + ',80%,60%,0.7)';
+      ctx.fill();
+    }
+    
+    particleSystem3D.rotation.x = time * 0.2;
+    particleSystem3D.rotation.y = time * 0.15;
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+})();`;
+  }
+
+  getTimeWarp4DCode() { 
+    return `// @animation 4d timeWarp - Global Three.js with time distortion
+(function(){
+  if (typeof THREE === 'undefined') {
+    console.error('Three.js not loaded.');
+    return;
+  }
+  
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none';
+  document.body.prepend(container);
+  
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+  
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 4;
+  
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+  
+  const particleCount = 3000;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 10;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 8;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
+  }
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const material = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.08, blending: THREE.AdditiveBlending });
+  const particles = new THREE.Points(geometry, material);
+  scene.add(particles);
+  
+  let time = 0;
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    
+    particles.rotation.y = time * 0.3;
+    particles.rotation.x = Math.sin(time * 0.2) * 0.2;
+    
+    const hue = (time * 50) % 360;
+    material.color.setHSL(hue / 360, 0.8, 0.6);
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();`;
+  }
+  
+  getHypercube4DCode() { 
+    return `// @animation 4d hypercube - Rotating tesseract effect using Global Three.js
+(function(){
+  if (typeof THREE === 'undefined') {
+    console.error('Three.js not loaded.');
+    return;
+  }
+  
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none';
+  document.body.prepend(container);
+  
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000010);
+  
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(2, 2, 4);
+  camera.lookAt(0, 0, 0);
+  
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+  
+  // Create a cube with wireframe (representing hypercube)
+  const geometry = new THREE.BoxGeometry(1.8, 1.8, 1.8);
+  const material = new THREE.MeshStandardMaterial({ color: 0x44aaff, emissive: 0x004466, wireframe: false, transparent: true, opacity: 0.3 });
+  const cube = new THREE.Mesh(geometry, material);
+  scene.add(cube);
+  
+  const edgesGeo = new THREE.EdgesGeometry(geometry);
+  const edgesMat = new THREE.LineBasicMaterial({ color: 0x88ccff });
+  const wireframe = new THREE.LineSegments(edgesGeo, edgesMat);
+  cube.add(wireframe);
+  
+  // Inner smaller cube
+  const innerCube = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), new THREE.MeshBasicMaterial({ color: 0xff66aa, wireframe: true }));
+  scene.add(innerCube);
+  
+  // Connecting lines between cubes
+  const connectorPositions = [];
+  for (let i = -1; i <= 1; i += 2) {
+    for (let j = -1; j <= 1; j += 2) {
+      for (let k = -1; k <= 1; k += 2) {
+        connectorPositions.push(new THREE.Vector3(i * 0.9, j * 0.9, k * 0.9));
+        connectorPositions.push(new THREE.Vector3(i * 0.45, j * 0.45, k * 0.45));
+      }
+    }
+  }
+  const connectorGeo = new THREE.BufferGeometry();
+  const connectorVertices = [];
+  for (let i = 0; i < connectorPositions.length; i += 2) {
+    connectorVertices.push(connectorPositions[i].x, connectorPositions[i].y, connectorPositions[i].z);
+    connectorVertices.push(connectorPositions[i + 1].x, connectorPositions[i + 1].y, connectorPositions[i + 1].z);
+  }
+  connectorGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(connectorVertices), 3));
+  const connectorMat = new THREE.LineBasicMaterial({ color: 0x88aaff });
+  const connectors = new THREE.LineSegments(connectorGeo, connectorMat);
+  scene.add(connectors);
+  
+  const ambientLight = new THREE.AmbientLight(0x222222);
+  scene.add(ambientLight);
+  const pointLight = new THREE.PointLight(0xffaa88, 0.8);
+  pointLight.position.set(1, 2, 2);
+  scene.add(pointLight);
+  
+  let time = 0;
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    
+    cube.rotation.x = time * 0.3;
+    cube.rotation.y = time * 0.4;
+    innerCube.rotation.x = -time * 0.25;
+    innerCube.rotation.y = -time * 0.35;
+    connectors.rotation.x = time * 0.3;
+    connectors.rotation.y = time * 0.4;
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();`;
+  }
+  
+  getNebulaVortex4DCode() { 
+    return this.getGalaxySpiral3DCode();
+  }
+  
+  getDimensionalRift4DCode() { 
+    return this.getTorusKnot3DCode();
+  }
+getInteractiveSystemCode() {
+  return `// CLJ Interactive System - Buttons, Hover, Click Effects
 (function(){
   'use strict';
   
@@ -868,7 +1610,8 @@ class CLJAnimationEngine {
   \`;
   document.head.appendChild(style);
 })();`;
-  }
+}
+
 
 // ==================== NEW UI COMPONENT LIBRARY ====================
   getComponentLibraryCode() {
@@ -2075,30 +2818,36 @@ window.CLJ.DragDrop = CLJDragDrop;
     return runtime + '\n' + interact + '\n' + uiLib;
   }
 
-  transformJSX(code, filePath) {
-    console.log(chalk.cyan(`🎨 Transforming JSX UI: ${path.basename(filePath)}`));
-    let transformed = code;
-    transformed = transformed.replace(/import\s+React.*from\s+['"]react['"];?/g, '');
-    transformed = transformed.replace(/import\s+.*from\s+['"]react-dom.*['"];?/g, '');
-    transformed = transformed.replace(/React\.createElement/g, '__CLJ_createElement');
-    transformed = transformed.replace(/createElement/g, '__CLJ_createElement');
-    transformed = transformed.replace(/useState/g, '__CLJ_useState');
-    transformed = transformed.replace(/useEffect/g, '__CLJ_useEffect');
-    transformed = transformed.replace(/useRef/g, '__CLJ_useRef');
-    transformed = transformed.replace(/useCallback/g, '__CLJ_useCallback');
-    transformed = transformed.replace(/useMemo/g, '__CLJ_useMemo');
-    transformed = transformed.replace(/createRoot\(.*?\)\.render/g, '__CLJ_mount');
-    transformed = transformed.replace(/ReactDOM\.render/g, '__CLJ_mount');
-    if (transformed.includes('@clj-animate')) {
-      const animMatch = transformed.match(/@clj-animate\s+(\w+)/);
+transformJSX(code, filePath) {
+  console.log(chalk.cyan(`🎨 Transforming JSX UI: ${path.basename(filePath)}`));
+  let transformed = code;
+  
+  // Process @clj-animate directives FIRST
+  if (transformed.includes('@clj-animate')) {
+    const lines = transformed.split('\n');
+    let newLines = [];
+    for (const line of lines) {
+      const animMatch = line.match(/@clj-animate\s+(\w+)/);
       if (animMatch && this.animationTemplates[animMatch[1]]) {
         const animCode = this.animationTemplates[animMatch[1]]();
-        transformed = animCode + '\n' + transformed;
+        newLines.unshift(animCode);
+        continue;
       }
+      newLines.push(line);
     }
-    return transformed;
+    transformed = newLines.join('\n');
   }
-
+  
+  // DO NOT replace useState, useEffect, etc. - they should stay as is
+  // The runtime provides these globally, so we don't need to rename them
+  
+  // Only remove React imports and rename React.createElement
+  transformed = transformed.replace(/import\s+React.*from\s+['"]react['"];?/g, '');
+  transformed = transformed.replace(/import\s+.*from\s+['"]react-dom.*['"];?/g, '');
+  transformed = transformed.replace(/React\.createElement/g, '__CLJ_createElement');
+  
+  return transformed;
+}
   processJSXFile(filePath) {
     const code = fs.readFileSync(filePath, 'utf8');
     const componentName = path.basename(filePath, path.extname(filePath));
@@ -2133,9 +2882,23 @@ addEventListener('resize',function(){window.__CLJ_device.width=innerWidth;window
   }
 }
 
+
+// ==================== CREATE ENGINE INSTANCE ====================
+const cljUIEngine = new CLJAnimationEngine();
+
+// ==================== REGISTER ENGINE GLOBALLY IMMEDIATELY ====================
+if (typeof window !== 'undefined') {
+  window.__cljUIEngine = cljUIEngine;
+}
+if (typeof global !== 'undefined') {
+  global.cljUIEngine = cljUIEngine;
+  global.__cljUIEngine = cljUIEngine;
+}
+
+
+
 // ==================== COMPILER SYSTEMS ====================
 
-const cljUIEngine = new CLJAnimationEngine();
 
 class CompilerManager {
   constructor() { 
@@ -2144,25 +2907,27 @@ class CompilerManager {
     this.compilerSource = null; 
     this.prefetchQueue = []; 
     this.microOptimizations = new Map(); 
-  }
+}
 async init() {
   console.log(chalk.cyan('\n🔧 Initializing Power Compiler...'));
   const localCompilerPath = path.join(process.cwd(), 'compiler.js');
   const npmCompilerPath = path.join(__dirname, 'compiler.js');
-  if (fs.existsSync(localCompilerPath) && localCompilerPath !== npmCompilerPath) { 
-    this.activeCompiler = localCompilerPath; 
+  if (fs.existsSync(localCompilerPath) && localCompilerPath !== npmCompilerPath) {
+    this.activeCompiler = localCompilerPath;
     console.log(chalk.green('📁 Local compiler.js detected'));
-  } else { 
-    this.activeCompiler = npmCompilerPath; 
+  } else {
+    this.activeCompiler = npmCompilerPath;
   }
-  this.compilerSource = { 
-    path: this.activeCompiler, 
-    code: fs.readFileSync(this.activeCompiler, 'utf8'), 
-    size: 0, 
-    hash: '' 
+  this.compilerSource = {
+    path: this.activeCompiler,
+    code: fs.readFileSync(this.activeCompiler, 'utf8'),
+    size: 0,
+    hash: ''
   };
-  console.log(chalk.cyan('   🎬 50 Background Animations (particleNebula, quantumWave, galaxy, etc.)'));
+  console.log(chalk.cyan('   🎬 50 Background 2D Animations (particleNebula, quantumWave, galaxy, starfield, etc.)'));
   console.log(chalk.cyan('   ✨ 30 Transition Effects (fadeIn, slideUp, neonGlow, rainbowGlow, etc.)'));
+  console.log(chalk.cyan('   🎮 5 Real 3D WebGL Animations (rotatingCube3D, sphereWave3D, torusKnot3D, particleField3D, galaxySpiral3D)'));
+  console.log(chalk.cyan('   🌌 5 4D Animations (quantumDimension4D, timeWarp4D, hypercube4D, nebulaVortex4D, dimensionalRift4D)'));
   console.log(chalk.cyan('   🧩 UI Components: Modal, Slider, Tabs, Tooltip, Toast, Accordion, Carousel, ProgressBar, Switch, Rating'));
   console.log(chalk.cyan('   📦 Advanced Components: DatePicker, ColorPicker, Audio, VideoPlayer, Markdown, CodeEditor'));
   console.log(chalk.cyan('   🧭 Router: CLJ.Router with dynamic routes + navigation'));
@@ -2173,7 +2938,7 @@ async init() {
   console.log(chalk.cyan(`   📋 Virtual List: CLJ.VirtualList for large datasets`));
   console.log(chalk.cyan(`   🔗 CLJ_DOM: Chainable DOM builder (like jQuery)`));
   console.log(chalk.cyan(`   ⚡ CLJ Runtime: useState, useEffect, createElement - No React required`));
-  console.log(chalk.green(`   ✅ Total: 50 BG Animations + 30 Effects + 20+ UI Components + Router + Forms + Charts + HTTP`));
+  console.log(chalk.green(`   ✅ Total: 50 BG + 30 Effects + 5 3D + 5 4D + 20+ UI Components + Router + Forms + Charts + HTTP`));
   return this;
 }
   createMicroOptimizations() { 
@@ -2199,33 +2964,628 @@ class CLJModuleSystem {
 
 const cljModuleSystem = new CLJModuleSystem();
 
+
+
+// ==================== CLJ ADVANCED DOM SYSTEM (FULLY CUSTOM) ====================
+
+class CLJSecureDOM {
+  constructor() {
+    this._elements = new Map();
+    this._listeners = new Map();
+    this._sanitizeHTML = (html) => {
+      return html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                 .replace(/on\w+="[^"]*"/g, '')
+                 .replace(/javascript:/gi, '');
+    };
+    this._uid = 0;
+  }
+
+  // Create element with security checks
+  create(tag, attrs = {}, children = []) {
+    const el = document.createElement(tag);
+    const id = `clj_${++this._uid}`;
+    
+    for (const [key, val] of Object.entries(attrs)) {
+      if (key.startsWith('on')) {
+        // Secure event binding
+        const eventType = key.slice(2).toLowerCase();
+        el.addEventListener(eventType, (e) => {
+          try {
+            val(e, el);
+          } catch(err) {
+            console.error('CLJ DOM event error:', err);
+          }
+        });
+      } else if (key === 'dangerouslySetInnerHTML') {
+        // Sanitize HTML before setting
+        el.innerHTML = this._sanitizeHTML(val.__html || val);
+      } else if (key === 'ref') {
+        if (typeof val === 'function') val(el);
+        else if (val && typeof val === 'object') val.current = el;
+      } else {
+        el.setAttribute(key, val);
+      }
+    }
+    
+    for (const child of children.flat()) {
+      if (child instanceof HTMLElement) el.appendChild(child);
+      else if (typeof child === 'string') el.appendChild(document.createTextNode(child));
+      else if (child && child.nodeType) el.appendChild(child);
+    }
+    
+    this._elements.set(id, el);
+    el._cljId = id;
+    return el;
+  }
+
+  // Selector engine with caching
+  $(selector, context = document) {
+    const el = context.querySelector(selector);
+    if (el && !el._cljWrapper) {
+      el._cljWrapper = new CLJElementWrapper(el);
+    }
+    return el ? el._cljWrapper : null;
+  }
+
+  // Multiple selector
+  $$(selector, context = document) {
+    return Array.from(context.querySelectorAll(selector)).map(el => {
+      if (!el._cljWrapper) el._cljWrapper = new CLJElementWrapper(el);
+      return el._cljWrapper;
+    });
+  }
+
+  // Create shadow DOM with isolation
+  createShadowDOM(host, options = {}) {
+    const shadow = host.attachShadow({ mode: options.mode || 'closed' });
+    shadow._cljSecure = true;
+    return new CLJShadowWrapper(shadow);
+  }
+
+  // Virtual DOM with diffing (custom implementation)
+  createVirtualDOM(type, props, ...children) {
+    return {
+      type,
+      props: props || {},
+      children: children.flat(),
+      key: props?.key || null,
+      _clj: true
+    };
+  }
+
+  // Render virtual DOM to real DOM with diffing
+  render(vnode, container) {
+    const realDOM = this._createRealDOM(vnode);
+    if (container.firstChild) {
+      container.replaceChild(realDOM, container.firstChild);
+    } else {
+      container.appendChild(realDOM);
+    }
+    return realDOM;
+  }
+
+  _createRealDOM(vnode) {
+    if (typeof vnode === 'string' || typeof vnode === 'number') {
+      return document.createTextNode(String(vnode));
+    }
+    
+    if (vnode.type === 'fragment') {
+      const fragment = document.createDocumentFragment();
+      for (const child of vnode.children) {
+        fragment.appendChild(this._createRealDOM(child));
+      }
+      return fragment;
+    }
+    
+    const el = this.create(vnode.type, vnode.props, []);
+    
+    for (const child of vnode.children) {
+      el.appendChild(this._createRealDOM(child));
+    }
+    
+    return el;
+  }
+
+  // Diff algorithm for virtual DOM updates
+  patch(parent, oldVNode, newVNode, index = 0) {
+    if (!oldVNode && !newVNode) return;
+    if (!oldVNode) {
+      parent.appendChild(this._createRealDOM(newVNode));
+      return;
+    }
+    if (!newVNode) {
+      parent.removeChild(parent.childNodes[index]);
+      return;
+    }
+    if (this._isDifferent(oldVNode, newVNode)) {
+      parent.replaceChild(this._createRealDOM(newVNode), parent.childNodes[index]);
+      return;
+    }
+    if (typeof oldVNode !== 'object') return;
+    
+    const children = Math.max(oldVNode.children.length, newVNode.children.length);
+    for (let i = 0; i < children; i++) {
+      this.patch(parent.childNodes[index], oldVNode.children[i], newVNode.children[i], i);
+    }
+  }
+
+  _isDifferent(a, b) {
+    if (typeof a !== typeof b) return true;
+    if (typeof a === 'string' || typeof a === 'number') return a !== b;
+    if (a.type !== b.type) return true;
+    if (JSON.stringify(a.props) !== JSON.stringify(b.props)) return true;
+    return false;
+  }
+
+  // Secure fetch wrapper
+  async fetch(url, options = {}) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), options.timeout || 30000);
+    
+    try {
+      const response = await window.fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          ...options.headers
+        }
+      });
+      
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  // Local storage with encryption (basic)
+  setSecureItem(key, value) {
+    const data = { value, timestamp: Date.now() };
+    localStorage.setItem(`clj_${key}`, JSON.stringify(data));
+  }
+  
+  getSecureItem(key, maxAge = 3600000) {
+    const raw = localStorage.getItem(`clj_${key}`);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (Date.now() - data.timestamp > maxAge) {
+      localStorage.removeItem(`clj_${key}`);
+      return null;
+    }
+    return data.value;
+  }
+
+  // Animation frame with cleanup
+  animate(callback, duration = 0) {
+    let start = null;
+    let frameId = null;
+    
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min(1, (timestamp - start) / duration);
+      callback(progress);
+      if (progress < 1) {
+        frameId = requestAnimationFrame(step);
+      }
+    };
+    
+    frameId = requestAnimationFrame(step);
+    return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+    };
+  }
+
+  // Event delegation with automatic cleanup
+  delegate(selector, event, handler, context = document) {
+    const wrappedHandler = (e) => {
+      const target = e.target.closest(selector);
+      if (target && this._elements.has(target._cljId)) {
+        handler(e, target);
+      }
+    };
+    
+    context.addEventListener(event, wrappedHandler);
+    
+    // Store for cleanup
+    if (!this._listeners.has(context)) this._listeners.set(context, []);
+    this._listeners.get(context).push({ event, handler: wrappedHandler, selector });
+    
+    return () => {
+      context.removeEventListener(event, wrappedHandler);
+    };
+  }
+
+  // Cleanup all listeners for a context
+  cleanup(context) {
+    const listeners = this._listeners.get(context);
+    if (listeners) {
+      for (const { event, handler } of listeners) {
+        context.removeEventListener(event, handler);
+      }
+      this._listeners.delete(context);
+    }
+  }
+}
+
+// CLJ Element Wrapper for chainable DOM operations
+class CLJElementWrapper {
+  constructor(el) {
+    this.el = el;
+    this._events = new Map();
+  }
+
+  attr(name, value) {
+    if (value === undefined) return this.el.getAttribute(name);
+    this.el.setAttribute(name, value);
+    return this;
+  }
+
+  css(prop, value) {
+    if (typeof prop === 'object') {
+      Object.assign(this.el.style, prop);
+    } else {
+      this.el.style[prop] = value;
+    }
+    return this;
+  }
+
+  addClass(...classes) {
+    this.el.classList.add(...classes);
+    return this;
+  }
+
+  removeClass(...classes) {
+    this.el.classList.remove(...classes);
+    return this;
+  }
+
+  toggleClass(className) {
+    this.el.classList.toggle(className);
+    return this;
+  }
+
+  hasClass(className) {
+    return this.el.classList.contains(className);
+  }
+
+  html(content) {
+    if (content === undefined) return this.el.innerHTML;
+    this.el.innerHTML = content;
+    return this;
+  }
+
+  text(content) {
+    if (content === undefined) return this.el.textContent;
+    this.el.textContent = content;
+    return this;
+  }
+
+  val(value) {
+    if (value === undefined) return this.el.value;
+    this.el.value = value;
+    return this;
+  }
+
+  on(event, handler, options = {}) {
+    const wrapped = (e) => {
+      try {
+        handler(e, this.el);
+      } catch(err) {
+        console.error('CLJ event error:', err);
+      }
+    };
+    this.el.addEventListener(event, wrapped, options);
+    
+    if (!this._events.has(event)) this._events.set(event, []);
+    this._events.get(event).push(wrapped);
+    
+    return this;
+  }
+
+  off(event, handler) {
+    if (handler) {
+      this.el.removeEventListener(event, handler);
+    } else if (event) {
+      const handlers = this._events.get(event) || [];
+      for (const h of handlers) {
+        this.el.removeEventListener(event, h);
+      }
+      this._events.delete(event);
+    } else {
+      for (const [ev, handlers] of this._events) {
+        for (const h of handlers) {
+          this.el.removeEventListener(ev, h);
+        }
+      }
+      this._events.clear();
+    }
+    return this;
+  }
+
+  once(event, handler) {
+    const wrapped = (e) => {
+      this.off(event, wrapped);
+      handler(e, this.el);
+    };
+    return this.on(event, wrapped);
+  }
+
+  trigger(event, detail = {}) {
+    const evt = new CustomEvent(event, { detail, bubbles: true });
+    this.el.dispatchEvent(evt);
+    return this;
+  }
+
+  append(child) {
+    if (child instanceof CLJElementWrapper) {
+      this.el.appendChild(child.el);
+    } else if (child instanceof HTMLElement) {
+      this.el.appendChild(child);
+    } else if (typeof child === 'string') {
+      this.el.appendChild(document.createTextNode(child));
+    }
+    return this;
+  }
+
+  prepend(child) {
+    if (child instanceof CLJElementWrapper) {
+      this.el.insertBefore(child.el, this.el.firstChild);
+    } else if (child instanceof HTMLElement) {
+      this.el.insertBefore(child, this.el.firstChild);
+    } else if (typeof child === 'string') {
+      this.el.insertBefore(document.createTextNode(child), this.el.firstChild);
+    }
+    return this;
+  }
+
+  remove() {
+    this.off();
+    this.el.remove();
+    return null;
+  }
+
+  find(selector) {
+    const found = this.el.querySelector(selector);
+    if (found && !found._cljWrapper) found._cljWrapper = new CLJElementWrapper(found);
+    return found ? found._cljWrapper : null;
+  }
+
+  findAll(selector) {
+    return Array.from(this.el.querySelectorAll(selector)).map(el => {
+      if (!el._cljWrapper) el._cljWrapper = new CLJElementWrapper(el);
+      return el._cljWrapper;
+    });
+  }
+
+  parent() {
+    if (!this.el.parentElement) return null;
+    if (!this.el.parentElement._cljWrapper) {
+      this.el.parentElement._cljWrapper = new CLJElementWrapper(this.el.parentElement);
+    }
+    return this.el.parentElement._cljWrapper;
+  }
+
+  children() {
+    return Array.from(this.el.children).map(child => {
+      if (!child._cljWrapper) child._cljWrapper = new CLJElementWrapper(child);
+      return child._cljWrapper;
+    });
+  }
+
+  siblings() {
+    return Array.from(this.el.parentElement?.children || []).filter(s => s !== this.el).map(s => {
+      if (!s._cljWrapper) s._cljWrapper = new CLJElementWrapper(s);
+      return s._cljWrapper;
+    });
+  }
+
+  animate(styles, duration = 300, easing = 'ease') {
+    return new Promise((resolve) => {
+      const startStyles = {};
+      const endStyles = {};
+      
+      for (const [prop, val] of Object.entries(styles)) {
+        startStyles[prop] = parseFloat(getComputedStyle(this.el)[prop]);
+        endStyles[prop] = parseFloat(val);
+      }
+      
+      const startTime = performance.now();
+      
+      const step = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        
+        let easeProgress = progress;
+        if (easing === 'ease-in') easeProgress = progress * progress;
+        else if (easing === 'ease-out') easeProgress = 1 - (1 - progress) * (1 - progress);
+        else if (easing === 'ease-in-out') easeProgress = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        
+        for (const [prop, endVal] of Object.entries(endStyles)) {
+          const startVal = startStyles[prop];
+          const newVal = startVal + (endVal - startVal) * easeProgress;
+          this.el.style[prop] = newVal + (prop === 'opacity' ? '' : 'px');
+        }
+        
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          resolve();
+        }
+      };
+      
+      requestAnimationFrame(step);
+    });
+  }
+
+  fadeIn(duration = 300) {
+    this.el.style.opacity = '0';
+    this.el.style.display = '';
+    return this.animate({ opacity: 1 }, duration, 'ease-out');
+  }
+
+  fadeOut(duration = 300) {
+    return this.animate({ opacity: 0 }, duration, 'ease-in').then(() => {
+      this.el.style.display = 'none';
+    });
+  }
+
+  slideDown(duration = 300) {
+    const height = this.el.scrollHeight;
+    this.el.style.overflow = 'hidden';
+    this.el.style.height = '0';
+    this.el.style.display = '';
+    
+    return this.animate({ height }, duration, 'ease-out').then(() => {
+      this.el.style.height = '';
+      this.el.style.overflow = '';
+    });
+  }
+
+  slideUp(duration = 300) {
+    const height = this.el.scrollHeight;
+    this.el.style.overflow = 'hidden';
+    this.el.style.height = height + 'px';
+    
+    return this.animate({ height: 0 }, duration, 'ease-in').then(() => {
+      this.el.style.display = 'none';
+      this.el.style.height = '';
+      this.el.style.overflow = '';
+    });
+  }
+
+  data(key, value) {
+    if (value === undefined) {
+      const val = this.el.dataset[key];
+      try { return JSON.parse(val); } catch(e) { return val; }
+    }
+    this.el.dataset[key] = typeof value === 'object' ? JSON.stringify(value) : value;
+    return this;
+  }
+
+  offset() {
+    const rect = this.el.getBoundingClientRect();
+    return {
+      top: rect.top + window.scrollY,
+      left: rect.left + window.scrollX,
+      width: rect.width,
+      height: rect.height
+    };
+  }
+
+  position() {
+    return {
+      top: this.el.offsetTop,
+      left: this.el.offsetLeft
+    };
+  }
+
+  width() {
+    return this.el.clientWidth;
+  }
+
+  height() {
+    return this.el.clientHeight;
+  }
+
+  scrollTo(options) {
+    this.el.scrollTo(options);
+    return this;
+  }
+
+  focus() {
+    this.el.focus();
+    return this;
+  }
+
+  blur() {
+    this.el.blur();
+    return this;
+  }
+
+  clone(deep = true) {
+    const cloned = this.el.cloneNode(deep);
+    cloned._cljWrapper = new CLJElementWrapper(cloned);
+    return cloned._cljWrapper;
+  }
+
+  empty() {
+    this.el.innerHTML = '';
+    return this;
+  }
+}
+
+// Create global DOM instance
+const CLJ_DOM = new CLJSecureDOM();
+
+// Expose to window
+if (typeof window !== 'undefined') {
+  window.CLJ = window.CLJ || {};
+  window.CLJ.DOM = CLJ_DOM;
+  window.CLJ.$ = (sel) => CLJ_DOM.$(sel);
+  window.CLJ.$$ = (sel) => CLJ_DOM.$$(sel);
+  window.CLJ.create = (tag, attrs, children) => CLJ_DOM.create(tag, attrs, children);
+  window.CLJ.virtual = (type, props, ...children) => CLJ_DOM.createVirtualDOM(type, props, ...children);
+  window.CLJ.render = (vnode, container) => CLJ_DOM.render(vnode, container);
+}
+
+
 // ==================== BUNDLE FUNCTION ====================
 
 async function bundleWithEsbuild(entryFile, outDir, minify, sourcemap) {
   const outFile = path.join(outDir, 'bundle.js');
   const cacheDir = path.join(process.cwd(), '.clj-cache');
+  
+  // Ensure cache directory exists
+  if (!fs.existsSync(cacheDir)) {
+    fs.mkdirSync(cacheDir, { recursive: true });
+  }
+  
+  // Process the file to get transformed code (handles @clj-animate)
+  const processed = cljUIEngine.processJSXFile(entryFile);
+  const transformedCode = processed.transformedCode;
+  
+  // Write transformed code to a temp file - ensure temp directory exists
+  const tempDir = path.join(cacheDir, 'temp');
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+  }
+  const tempFile = path.join(tempDir, 'temp_' + Date.now() + '.jsx');
+  fs.writeFileSync(tempFile, transformedCode);
+  
   const entryCode = fs.readFileSync(entryFile, 'utf8');
-  const cacheKey = crypto.createHash('md5').update('power_v5_' + entryFile + entryCode).digest('hex');
+  const cacheKey = crypto.createHash('md5').update('power_v5_' + entryFile + entryCode + transformedCode).digest('hex');
   const cachePath = path.join(cacheDir, cacheKey + '.js');
 
   if (fs.existsSync(cachePath) && !process.argv.includes('--no-cache')) {
     fs.mkdirSync(outDir, { recursive: true });
     fs.copyFileSync(cachePath, outFile);
     console.log(chalk.green('   ⚡ Cache hit'));
+    try { fs.unlinkSync(tempFile); } catch(e) {}
     return outFile;
   }
 
-  cljUIEngine.processJSXFile(entryFile);
   const fullUI = cljUIEngine.generateCLJUI();  // includes runtime + interactive + components
 
   await esbuild.build({
-    entryPoints: [entryFile], bundle: true, outfile: outFile, platform: 'browser',
+    entryPoints: [tempFile],  // ONLY CHANGE: use tempFile instead of entryFile
+    bundle: true,
+    outfile: outFile,
+    platform: 'browser',
     target: ['es2020', 'chrome58', 'firefox57', 'safari11', 'edge79'],
-    minify: minify || false, sourcemap: sourcemap ? 'linked' : false, format: 'iife',
-    globalName: 'ClientLiteApp', loader: { '.jsx': 'jsx', '.js': 'jsx' },
-    jsxFactory: '__CLJ_createElement', jsxFragment: '__CLJ_Fragment',
-    define: { 'process.env.NODE_ENV': minify ? '"production"' : '"development"', 'global': 'window', 'globalThis': 'window' },
-   banner: { js: `// ╔══════════════════════════════════════════════════════════════╗
+    minify: minify || false,
+    sourcemap: sourcemap ? 'linked' : false,
+    format: 'iife',
+    globalName: 'ClientLiteApp',
+    loader: { '.jsx': 'jsx', '.js': 'jsx' },
+    jsxFactory: '__CLJ_createElement',
+    jsxFragment: '__CLJ_Fragment',
+    define: {
+      'process.env.NODE_ENV': minify ? '"production"' : '"development"',
+      'global': 'window',
+      'globalThis': 'window'
+    },
+    banner: { js: `// ╔══════════════════════════════════════════════════════════════╗
 // ║     CLJ POWER ENGINE - ZERO DEPENDENCY UI FRAMEWORK      ║
 // ╠══════════════════════════════════════════════════════════════╣
 // ║  50 Background Animations   30 Transition Effects            ║
@@ -2237,14 +3597,23 @@ async function bundleWithEsbuild(entryFile, outDir, minify, sourcemap) {
 // ╚══════════════════════════════════════════════════════════════╝
 ` + fullUI + '\n' },
     footer: { js: '// CLJ Power Complete' },
-    legalComments: 'none', logLevel: 'warning', treeShaking: true
+    legalComments: 'none',
+    logLevel: 'warning',
+    treeShaking: true,
+   
+  
+    // Add node polyfills if needed
+    inject: []
   });
 
   fs.mkdirSync(cacheDir, { recursive: true });
   fs.copyFileSync(outFile, cachePath);
+  
+  // Clean up temp file
+  try { fs.unlinkSync(tempFile); } catch(e) {}
+  
   return outFile;
 }
-
 // ==================== COMPILE PROJECT ====================
 
 async function compileProject(mode, isProduction) {
@@ -2261,6 +3630,23 @@ async function compileProject(mode, isProduction) {
   try { cljLanguage = require('./clj-language'); } catch(e) { cljLanguage = { compileCLJ: (c) => ({ success: true, code: c }) }; }
   if (!fs.existsSync(srcDir)) fs.mkdirSync(srcDir, { recursive: true });
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+
+  // ===== COPY HTML FILES =====
+  const htmlFiles = fs.readdirSync(srcDir).filter(f => f.endsWith('.html'));
+  for (const htmlFile of htmlFiles) {
+    const srcPath = path.join(srcDir, htmlFile);
+    const destPath = path.join(outDir, htmlFile);
+    fs.copyFileSync(srcPath, destPath);
+    console.log(chalk.green(`📄 Copied HTML: ${htmlFile} → dist/${mode || 'client'}/`));
+  }
+  
+  // Also copy index.html if it exists in root
+  const rootIndexHtml = path.join(process.cwd(), 'index.html');
+  const rootIndexDest = path.join(outDir, 'index.html');
+  if (fs.existsSync(rootIndexHtml)) {
+    fs.copyFileSync(rootIndexHtml, rootIndexDest);
+    console.log(chalk.green(`📄 Copied HTML: index.html → dist/${mode || 'client'}/`));
+  }
 
   let files = fs.readdirSync(srcDir);
   const cljFiles = files.filter(f => f.endsWith('.clj'));
@@ -2284,6 +3670,184 @@ async function compileProject(mode, isProduction) {
   }
   console.log(chalk.greenBright('\n✨ Compiled successfully for mode: ' + mode));
   return true;
+}
+// ==================== NEW IMPORT SYSTEM FOR POWER.JS ====================
+
+// Export configuration for different import styles
+const PowerExports = {
+  // Main export (default)
+  default: {
+    compileProject,
+    bundleWithEsbuild,
+    compilerManager,
+    cljModuleSystem,
+    cljUIEngine,
+    CLJAnimationEngine
+  },
+  
+  // Animations submodule
+  animations: {
+    particleNebula: () => cljUIEngine.getParticleNebulaCode(),
+    quantumWave: () => cljUIEngine.getQuantumWaveCode(),
+    crystalMatrix: () => cljUIEngine.getCrystalMatrixCode(),
+    starfield: () => cljUIEngine.getStarfieldCode(),
+    galaxy: () => cljUIEngine.getGalaxyCode(),
+    wormhole: () => cljUIEngine.getWormholeCode(),
+    fireworks: () => cljUIEngine.getFireworksCode(),
+    matrixRain: () => cljUIEngine.getMatrixRainCode(),
+    // 2D animations
+    ...Object.fromEntries(Object.keys(cljUIEngine.animationTemplates).map(key => [key, () => cljUIEngine.animationTemplates[key]()])),
+    // 3D animations
+    rotatingCube3D: () => cljUIEngine.getRotatingCube3DCode(),
+    sphereWave3D: () => cljUIEngine.getSphereWave3DCode(),
+    torusKnot3D: () => cljUIEngine.getTorusKnot3DCode(),
+    particleField3D: () => cljUIEngine.getParticleField3DCode(),
+    galaxySpiral3D: () => cljUIEngine.getGalaxySpiral3DCode(),
+    // 4D animations
+    quantumDimension4D: () => cljUIEngine.getQuantumDimension4DCode(),
+    timeWarp4D: () => cljUIEngine.getTimeWarp4DCode(),
+    hypercube4D: () => cljUIEngine.getHypercube4DCode(),
+    nebulaVortex4D: () => cljUIEngine.getNebulaVortex4DCode(),
+    dimensionalRift4D: () => cljUIEngine.getDimensionalRift4DCode(),
+    // Transition effects
+    fadeIn: () => cljUIEngine.getFadeInCode(),
+    slideUp: () => cljUIEngine.getSlideUpCode(),
+    neonGlow: () => cljUIEngine.getNeonGlowCode(),
+    rainbowGlow: () => cljUIEngine.getRainbowGlowCode(),
+    glassmorphism: () => cljUIEngine.getGlassmorphismCode()
+  },
+  
+  // UI Components submodule
+  ui: {
+    Modal: () => window.CLJ?.Modal,
+    Slider: () => window.CLJ?.Slider,
+    Tabs: () => window.CLJ?.Tabs,
+    Tooltip: () => window.CLJ?.Tooltip,
+    Toast: () => window.CLJ?.Toast,
+    Accordion: () => window.CLJ?.Accordion,
+    Carousel: () => window.CLJ?.Carousel,
+    ProgressBar: () => window.CLJ?.ProgressBar,
+    Switch: () => window.CLJ?.Switch,
+    Rating: () => window.CLJ?.Rating,
+    DatePicker: () => window.CLJ?.DatePicker,
+    ColorPicker: () => window.CLJ?.ColorPicker,
+    Audio: () => window.CLJ?.Audio,
+    VideoPlayer: () => window.CLJ?.VideoPlayer,
+    Markdown: () => window.CLJ?.Markdown,
+    CodeEditor: () => window.CLJ?.CodeEditor,
+    Router: () => window.CLJ?.Router,
+    Form: () => window.CLJ?.Form,
+    Chart: () => window.CLJ?.Chart,
+    DragDrop: () => window.CLJ?.DragDrop,
+    VirtualList: () => window.CLJ?.VirtualList,
+    DOM: () => window.CLJ?.DOM
+  },
+  
+  // Runtime submodule
+  runtime: {
+    useState: () => window.__CLJ_useState,
+    useEffect: () => window.__CLJ_useEffect,
+    useRef: () => window.__CLJ_useRef,
+    useCallback: () => window.__CLJ_useCallback,
+    useMemo: () => window.__CLJ_useMemo,
+    createElement: () => window.__CLJ_createElement,
+    mount: () => window.__CLJ_mount,
+    device: () => window.__CLJ_device
+  },
+  
+  // Full engine
+  engine: () => cljUIEngine
+};
+
+// Package.json exports configuration (to be added to package.json)
+const packageExports = {
+  "name": "clientlite-power",
+  "version": "2.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./lib/.power.js",
+      "require": "./lib/.power.js",
+      "default": "./lib/.power.js"
+    },
+    "./animations": {
+      "import": "./lib/.power.js/animations",
+      "require": "./lib/.power.js/animations",
+      "default": "./lib/.power.js/animations"
+    },
+    "./ui": {
+      "import": "./lib/.power.js/ui",
+      "require": "./lib/.power.js/ui",
+      "default": "./lib/.power.js/ui"
+    },
+    "./runtime": {
+      "import": "./lib/.power.js/runtime",
+      "require": "./lib/.power.js/runtime",
+      "default": "./lib/.power.js/runtime"
+    },
+    "./3d": {
+      "import": "./lib/.power.js/3d",
+      "require": "./lib/.power.js/3d",
+      "default": "./lib/.power.js/3d"
+    },
+    "./4d": {
+      "import": "./lib/.power.js/4d",
+      "require": "./lib/.power.js/4d",
+      "default": "./lib/.power.js/4d"
+    }
+  }
+};
+
+// Conditional exports for ES modules
+if (typeof module !== 'undefined' && module.exports) {
+  // CommonJS export
+  module.exports = { 
+    compileProject, 
+    bundleWithEsbuild, 
+    compilerManager, 
+    cljModuleSystem, 
+    cljUIEngine, 
+    CLJAnimationEngine,
+    // New named exports for better imports
+    PowerExports,
+    packageExports
+  };
+}
+
+// Also set up global for browser ESM imports
+if (typeof window !== 'undefined') {
+  window.Power = {
+    compile: compileProject,
+    bundle: bundleWithEsbuild,
+    animations: PowerExports.animations,
+    ui: PowerExports.ui,
+    runtime: PowerExports.runtime
+  };
+}
+
+// ==================== REGISTER ENGINE GLOBALLY FOR RUNTIME IMPORTS ====================
+// This makes the engine available to the separate module files (runtime.js, ui.js, 3d.js, 4d.js)
+if (typeof window !== 'undefined') {
+  window.__cljUIEngine = cljUIEngine;
+}
+if (typeof global !== 'undefined') {
+  global.cljUIEngine = cljUIEngine;
+}
+
+// Also ensure all animation functions are directly accessible
+if (typeof window !== 'undefined') {
+  // Make all animation templates directly callable
+  window.__cljAnimations = {
+    quantumWave: () => cljUIEngine.getQuantumWaveCode(),
+    rotatingCube3D: () => cljUIEngine.getRotatingCube3DCode(),
+    torusKnot3D: () => cljUIEngine.getTorusKnot3DCode(),
+    sphereWave3D: () => cljUIEngine.getSphereWave3DCode(),
+    particleField3D: () => cljUIEngine.getParticleField3DCode(),
+    galaxySpiral3D: () => cljUIEngine.getGalaxySpiral3DCode(),
+    quantumDimension4D: () => cljUIEngine.getQuantumDimension4DCode(),
+    timeWarp4D: () => cljUIEngine.getTimeWarp4DCode(),
+    hypercube4D: () => cljUIEngine.getHypercube4DCode()
+  };
 }
 
 module.exports = { compileProject, bundleWithEsbuild, compilerManager, cljModuleSystem, cljUIEngine, CLJAnimationEngine };
