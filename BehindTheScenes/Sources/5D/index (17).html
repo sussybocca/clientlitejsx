@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>5D Hyperdimensional Engine | WebGPU | Mathematical 5D Projections</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, monospace;
+        }
+        
+        #info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border-left: 3px solid #667eea;
+            pointer-events: none;
+            font-size: 14px;
+        }
+        
+        #info h1 {
+            font-size: 18px;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #667eea, #ff44aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        #info p {
+            font-size: 11px;
+            opacity: 0.7;
+            letter-spacing: 0.5px;
+        }
+        
+        #stats {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            color: #0f0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 11px;
+            pointer-events: none;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .instruction {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            color: rgba(255,255,255,0.5);
+            background: rgba(0,0,0,0.4);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-family: monospace;
+            pointer-events: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        .webgpu-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: #00ff00;
+            font-family: monospace;
+            pointer-events: none;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-family: monospace;
+            text-align: center;
+            z-index: 10000;
+            background: rgba(0,0,0,0.8);
+            padding: 20px 40px;
+            border-radius: 20px;
+            border: 1px solid #667eea;
+        }
+        
+        .loading .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 10px auto;
+            border: 3px solid rgba(102,126,234,0.3);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            #info { font-size: 10px; padding: 8px 12px; top: 10px; left: 10px; }
+            #info h1 { font-size: 12px; }
+            .instruction { font-size: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="info">
+    <h1>🌀 5D Hyperdimensional Engine</h1>
+    <p>Mathematical 5D Projections | WebGPU | Real-time 5D Rotations</p>
+</div>
+
+<div id="stats">
+    <span id="fps">--</span> FPS | <span id="vertexCount">--</span> vertices
+</div>
+
+<div class="instruction">
+    🎛️ Use the control panel (bottom-right) to switch 5D objects | ⚡ Adjust rotation speed
+</div>
+
+<div class="webgpu-badge">
+    ⚡ WebGPU Accelerated | 5D → 3D Projection
+</div>
+
+<div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading 5D Hyperdimensional Engine...</p>
+    <p style="font-size: 10px; opacity: 0.6;">Initializing WebGPU and Mathematical 5D Primitives</p>
+</div>
+
+<script>
+    // Simple FPS counter
+    let frameCount = 0;
+    let lastTime = performance.now();
+    let fps = 0;
+    
+    function updateStats(vertexCount) {
+        frameCount++;
+        const now = performance.now();
+        if (now - lastTime >= 1000) {
+            fps = frameCount;
+            frameCount = 0;
+            lastTime = now;
+            const fpsEl = document.getElementById('fps');
+            if (fpsEl) fpsEl.textContent = fps;
+        }
+        if (vertexCount !== undefined) {
+            const vcEl = document.getElementById('vertexCount');
+            if (vcEl) vcEl.textContent = vertexCount.toLocaleString();
+        }
+        requestAnimationFrame(() => updateStats());
+    }
+    updateStats();
+</script>
+
+<script>
+    // Check for WebGPU support and show warning if not available
+    (function checkWebGPUSupport() {
+        if (!navigator.gpu) {
+            const warningDiv = document.createElement('div');
+            warningDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:#fff;z-index:10000;background:rgba(0,0,0,0.9);padding:30px;border-radius:20px;border:1px solid #ff4444;max-width:90%;';
+            warningDiv.innerHTML = `
+                <h1 style="color:#ff4444;">⚠️ WebGPU Not Supported</h1>
+                <p style="margin:15px 0;">Please enable WebGPU in your browser:</p>
+                <ul style="text-align:left;margin:15px 0;">
+                    <li>Chrome Canary: chrome://flags/#enable-unsafe-webgpu</li>
+                    <li>Edge Canary: edge://flags/#enable-unsafe-webgpu</li>
+                    <li>Or use a browser that supports WebGPU natively</li>
+                </ul>
+                <p style="margin-top:15px;opacity:0.7;">This engine requires WebGPU for true 5D mathematical rendering.</p>
+            `;
+            document.body.appendChild(warningDiv);
+            const loading = document.getElementById('loading');
+            if (loading) loading.style.display = 'none';
+            console.error('WebGPU not supported');
+        }
+    })();
+</script>
+
+<!-- Import the external 5D.js file (capital D) -->
+<script src="5D.js"></script>
+
+<script>
+    // Wait for the 5D engine to initialize
+    (async function() {
+        // Wait for the engine to be available
+        const checkEngine = setInterval(() => {
+            if (window.Hyperdimensional5D) {
+                clearInterval(checkEngine);
+                const loading = document.getElementById('loading');
+                if (loading) loading.style.display = 'none';
+                console.log('✅ 5D Hyperdimensional Engine loaded successfully');
+                
+                // The engine auto-initializes, but we can also add additional controls
+                setTimeout(() => {
+                    // Update vertex count periodically
+                    setInterval(() => {
+                        if (window.Hyperdimensional5D && window.Hyperdimensional5D.controller && window.Hyperdimensional5D.controller.scene) {
+                            const scene = window.Hyperdimensional5D.controller.scene;
+                            const obj = scene.objects[scene.animationType];
+                            if (obj && obj.vertices) {
+                                const vcEl = document.getElementById('vertexCount');
+                                if (vcEl) vcEl.textContent = obj.vertices.length.toLocaleString();
+                            } else if (obj && obj.points) {
+                                const vcEl = document.getElementById('vertexCount');
+                                if (vcEl) vcEl.textContent = obj.points.length.toLocaleString();
+                            }
+                        }
+                    }, 500);
+                }, 1000);
+            }
+        }, 100);
+    })();
+</script>
+
+</body>
+</html>
