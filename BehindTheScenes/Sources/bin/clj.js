@@ -208,10 +208,10 @@ async function importWithFallback(moduleName, importPath) {
 // Initialize and start the lib override system
 const libOverrides = initLibOverrides();
 
-// Start watching if any local overrides exist
+// Start watching if any local overrides exist (skip watcher in CI environments like Netlify)
 const hasLocalOverrides = Object.entries(libOverrides).some(([_, path]) => !path.includes('node_modules'));
 
-if (hasLocalOverrides) {
+if (hasLocalOverrides && !process.env.CI) {
   const watcher = createFileWatcher(libOverrides, (changedFiles) => {
     console.log(chalk.yellow('\n🔄 Local lib files changed...'));
     // Updates happen automatically through the override paths
@@ -231,8 +231,9 @@ if (hasLocalOverrides) {
   });
   
   console.log(chalk.cyan('👀 Watching for local file changes...\n'));
+} else if (process.env.CI) {
+  console.log(chalk.gray('⚡ CI environment detected - watcher disabled\n'));
 }
-
 // ============================================
 // END LOCAL LIB OVERRIDE SYSTEM WITH FALLBACK
 // ============================================
