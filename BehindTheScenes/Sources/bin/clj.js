@@ -7,10 +7,9 @@ import { fileURLToPath } from 'url';
 // Add this after the existing compiler override check and before the main function
 
 // ============================================
-// LOCAL LIB OVERRIDE SYSTEM
+// LOCAL LIB OVERRIDE SYSTEM WITH FALLBACK
 // ============================================
 
-// Map of all lib files that can be overridden
 const LIB_FILES = [
   'apiRouter.js',
   'clj-language.js',
@@ -26,17 +25,18 @@ const LIB_FILES = [
   'tunnel.js'
 ];
 
-// Special handling for .power.js override (watches for any folder containing .power.js)
+// Get npm lib path - centralized
+const npmLibPath = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'lib');
+
+// Special handling for .power.js override
 function getPowerOverridePath() {
   const cwd = process.cwd();
   
-  // Check for .power.js in current directory
   const localPowerPath = path.join(cwd, '.power.js');
   if (fs.existsSync(localPowerPath)) {
     return localPowerPath;
   }
   
-  // Check subdirectories for .power.js
   if (fs.existsSync(cwd)) {
     const dirs = fs.readdirSync(cwd, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory());
@@ -49,29 +49,52 @@ function getPowerOverridePath() {
     }
   }
   
-  return null;
+  // FALLBACK: return npm path
+  return path.join(npmLibPath, 'power.js');
 }
 
-// Generic lib file override function
+// Generic lib file override function WITH FALLBACK
 function getLocalOverride(libFileName) {
   const cwd = process.cwd();
+  const npmPath = path.join(npmLibPath, libFileName);
   const localPath = path.join(cwd, libFileName);
   
+  // Try local first
   if (fs.existsSync(localPath)) {
-    return localPath;
+    try {
+      // Verify the file is readable
+      fs.accessSync(localPath, fs.constants.R_OK);
+      return localPath;
+    } catch (err) {
+      console.log(chalk.yellow(`⚠️ Local ${libFileName} exists but not readable, using npm fallback`));
+    }
   }
   
-  // Check one level of subdirectories
+  // Check subdirectories
   if (fs.existsSync(cwd)) {
-    const dirs = fs.readdirSync(cwd, { withFileTypes: true })
-      .filter(dirent => dirent.isDirectory());
-    
-    for (const dir of dirs) {
-      const filePath = path.join(cwd, dir.name, libFileName);
-      if (fs.existsSync(filePath)) {
-        return filePath;
+    try {
+      const dirs = fs.readdirSync(cwd, { withFileTypes: true })
+        .filter(dirent => dirent.isDirectory());
+      
+      for (const dir of dirs) {
+        const filePath = path.join(cwd, dir.name, libFileName);
+        if (fs.existsSync(filePath)) {
+          try {
+            fs.accessSync(filePath, fs.constants.R_OK);
+            return filePath;
+          } catch (err) {
+            continue;
+          }
+        }
       }
+    } catch (err) {
+      // FALLBACK: use npm
     }
+  }
+  
+  // FALLBACK: always return npm path as last resort
+  if (fs.existsSync(npmPath)) {
+    return npmPath;
   }
   
   return null;
@@ -80,23 +103,24 @@ function getLocalOverride(libFileName) {
 // Initialize override system
 function initLibOverrides() {
   const overrides = {};
-  const npmLibPath = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'lib');
   
   console.log(chalk.cyan('\n🔍 Scanning for local lib overrides...'));
   
-  // Special case for .power.js
-  const powerOverride = getPowerOverridePath();
-  if (powerOverride) {
-    overrides['power.js'] = powerOverride;
-    console.log(chalk.green(`📁 Found .power.js override: ${powerOverride}`));
-  }
-  
-  // Check all other lib files
+  // Check all lib files
   for (const libFile of LIB_FILES) {
-    const localPath = getLocalOverride(libFile);
-    if (localPath) {
-      overrides[libFile] = localPath;
-      console.log(chalk.green(`📁 Found ${libFile} override: ${localPath}`));
+    const filePath = getLocalOverride(libFile);
+    
+    if (filePath) {
+      const isLocal = !filePath.includes('node_modules');
+      overrides[libFile] = filePath;
+      
+      if (isLocal) {
+        console.log(chalk.green(`📁 Found ${libFile} override: ${path.relative(process.cwd(), filePath)}`));
+      } else {
+        console.log(chalk.gray(`📦 Using npm fallback: ${libFile}`));
+      }
+    } else {
+      console.log(chalk.red(`❌ ${libFile} not found in local or npm`));
     }
   }
   
@@ -107,36 +131,49 @@ function initLibOverrides() {
 function createFileWatcher(overrides, callback) {
   const fileHashes = new Map();
   
-  // Calculate initial hashes
-  for (const [libFile, localPath] of Object.entries(overrides)) {
+  for (const [libFile, filePath] of Object.entries(overrides)) {
     try {
-      const content = fs.readFileSync(localPath);
-      const hash = crypto.createHash('md5').update(content).digest('hex');
-      fileHashes.set(localPath, hash);
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath);
+        const hash = crypto.createHash('md5').update(content).digest('hex');
+        fileHashes.set(filePath, hash);
+      }
     } catch (err) {
-      // File might not exist yet
+      // Skip unreadable files - npm fallback handles it
     }
   }
   
-  // Watch function
   function checkForChanges() {
     const changed = [];
     
-    for (const [libFile, localPath] of Object.entries(overrides)) {
+    for (const [libFile, filePath] of Object.entries(overrides)) {
       try {
-        if (!fs.existsSync(localPath)) continue;
+        if (!fs.existsSync(filePath)) {
+          // File disappeared, fallback to npm
+          const npmPath = path.join(npmLibPath, libFile);
+          if (fs.existsSync(npmPath)) {
+            overrides[libFile] = npmPath;
+            console.log(chalk.yellow(`⚠️ ${libFile} disappeared, falling back to npm`));
+          }
+          continue;
+        }
         
-        const content = fs.readFileSync(localPath);
+        const content = fs.readFileSync(filePath);
         const newHash = crypto.createHash('md5').update(content).digest('hex');
-        const oldHash = fileHashes.get(localPath);
+        const oldHash = fileHashes.get(filePath);
         
         if (oldHash && newHash !== oldHash) {
-          changed.push({ libFile, localPath, oldHash, newHash });
-          fileHashes.set(localPath, newHash);
-          console.log(chalk.yellow(`🔄 Detected change in: ${localPath}`));
+          changed.push({ libFile, localPath: filePath, oldHash, newHash });
+          fileHashes.set(filePath, newHash);
+          console.log(chalk.yellow(`🔄 Detected change in: ${filePath}`));
         }
       } catch (err) {
-        // Skip files that can't be read
+        // Error reading, fallback to npm
+        const npmPath = path.join(npmLibPath, libFile);
+        if (fs.existsSync(npmPath)) {
+          overrides[libFile] = npmPath;
+          console.log(chalk.yellow(`⚠️ Error reading ${libFile}, falling back to npm`));
+        }
       }
     }
     
@@ -150,86 +187,42 @@ function createFileWatcher(overrides, callback) {
   return { checkForChanges, fileHashes };
 }
 
-// Swap out npm files with local overrides
-function swapLibFiles(overrides) {
-  const npmLibPath = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'lib');
+// Function to import module with automatic fallback
+async function importWithFallback(moduleName, importPath) {
+  const localOverride = libOverrides[moduleName];
   
-  for (const [libFile, localPath] of Object.entries(overrides)) {
-    const npmPath = path.join(npmLibPath, libFile);
-    
+  if (localOverride && fs.existsSync(localOverride)) {
     try {
-      // Backup original npm file if not already backed up
-      const backupPath = npmPath + '.npm-backup';
-      if (fs.existsSync(npmPath) && !fs.existsSync(backupPath)) {
-        fs.copyFileSync(npmPath, backupPath);
-        console.log(chalk.gray(`💾 Backed up original ${libFile} to ${libFile}.npm-backup`));
-      }
-      
-      // Replace npm file with local version
-      const content = fs.readFileSync(localPath);
-      fs.writeFileSync(npmPath, content);
-      console.log(chalk.green(`✅ Swapped ${libFile} with local version`));
-      
+      console.log(chalk.gray(`📁 Loading ${moduleName} from: ${path.relative(process.cwd(), localOverride)}`));
+      return await import('file:///' + localOverride.replace(/\\/g, '/'));
     } catch (err) {
-      console.error(chalk.red(`❌ Failed to swap ${libFile}: ${err.message}`));
+      console.log(chalk.yellow(`⚠️ Failed to load local ${moduleName}, falling back to npm`));
     }
   }
-}
-
-// Restore original npm files
-function restoreLibFiles(files = null) {
-  const npmLibPath = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'lib');
-  const filesToRestore = files || LIB_FILES;
   
-  for (const libFile of filesToRestore) {
-    const npmPath = path.join(npmLibPath, libFile);
-    const backupPath = npmPath + '.npm-backup';
-    
-    try {
-      if (fs.existsSync(backupPath)) {
-        const content = fs.readFileSync(backupPath);
-        fs.writeFileSync(npmPath, content);
-        fs.unlinkSync(backupPath);
-        console.log(chalk.green(`🔄 Restored ${libFile} from backup`));
-      }
-    } catch (err) {
-      console.error(chalk.red(`❌ Failed to restore ${libFile}: ${err.message}`));
-    }
-  }
+  // FALLBACK: load from npm
+  console.log(chalk.gray(`📦 Loading ${moduleName} from npm`));
+  return await import(importPath);
 }
 
 // Initialize and start the lib override system
 const libOverrides = initLibOverrides();
 
-if (Object.keys(libOverrides).length > 0) {
-  swapLibFiles(libOverrides);
-  
-  // Create watcher for continuous monitoring
+// Start watching if any local overrides exist
+const hasLocalOverrides = Object.entries(libOverrides).some(([_, path]) => !path.includes('node_modules'));
+
+if (hasLocalOverrides) {
   const watcher = createFileWatcher(libOverrides, (changedFiles) => {
-    console.log(chalk.yellow('\n🔄 Local lib files changed, updating npm copies...'));
-    for (const file of changedFiles) {
-      const npmLibPath = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'lib');
-      const npmPath = path.join(npmLibPath, file.libFile);
-      try {
-        const content = fs.readFileSync(file.localPath);
-        fs.writeFileSync(npmPath, content);
-        console.log(chalk.green(`✅ Updated ${file.libFile}`));
-      } catch (err) {
-        console.error(chalk.red(`❌ Failed to update ${file.libFile}: ${err.message}`));
-      }
-    }
+    console.log(chalk.yellow('\n🔄 Local lib files changed...'));
+    // Updates happen automatically through the override paths
   });
   
-  // Check for changes every 2 seconds
   const watcherInterval = setInterval(() => {
     watcher.checkForChanges();
   }, 2000);
   
-  // Clean up on exit
   process.on('SIGINT', () => {
-    console.log(chalk.yellow('\n🔌 Shutting down, restoring original files...'));
     clearInterval(watcherInterval);
-    restoreLibFiles();
     process.exit(0);
   });
   
@@ -237,11 +230,11 @@ if (Object.keys(libOverrides).length > 0) {
     clearInterval(watcherInterval);
   });
   
-  console.log(chalk.cyan('👀 Watching local lib files for changes...\n'));
+  console.log(chalk.cyan('👀 Watching for local file changes...\n'));
 }
 
 // ============================================
-// END LOCAL LIB OVERRIDE SYSTEM
+// END LOCAL LIB OVERRIDE SYSTEM WITH FALLBACK
 // ============================================
 
 const { compileProject, startHotReload } = compilerModule;
