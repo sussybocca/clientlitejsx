@@ -3534,36 +3534,18 @@ if (typeof window !== 'undefined') {
 
 async function bundleWithEsbuild(entryFile, outDir, minify, sourcemap) {
   const outFile = path.join(outDir, 'bundle.js');
-  const cacheDir = path.join(process.cwd(), '.clj-cache');
-  
-  // Ensure cache directory exists
-  if (!fs.existsSync(cacheDir)) {
-    fs.mkdirSync(cacheDir, { recursive: true });
-  }
   
   // Process the file to get transformed code (handles @clj-animate)
   const processed = cljUIEngine.processJSXFile(entryFile);
   const transformedCode = processed.transformedCode;
   
-  // Write transformed code to a temp file - ensure temp directory exists
-  const tempDir = path.join(cacheDir, 'temp');
+  // Write transformed code to a temp file
+  const tempDir = path.join(process.cwd(), '.clj-temp');
   if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir, { recursive: true });
   }
   const tempFile = path.join(tempDir, 'temp_' + Date.now() + '.jsx');
   fs.writeFileSync(tempFile, transformedCode);
-  
-  const entryCode = fs.readFileSync(entryFile, 'utf8');
-  const cacheKey = crypto.createHash('md5').update('power_v5_' + entryFile + entryCode + transformedCode).digest('hex');
-  const cachePath = path.join(cacheDir, cacheKey + '.js');
-
-  if (fs.existsSync(cachePath) && !process.argv.includes('--no-cache')) {
-    fs.mkdirSync(outDir, { recursive: true });
-    fs.copyFileSync(cachePath, outFile);
-    console.log(chalk.green('   ⚡ Cache hit'));
-    try { fs.unlinkSync(tempFile); } catch(e) {}
-    return outFile;
-  }
 
   const fullUI = cljUIEngine.generateCLJUI();  // includes runtime + interactive + components
 
@@ -3606,9 +3588,6 @@ async function bundleWithEsbuild(entryFile, outDir, minify, sourcemap) {
     inject: []
   });
 
-  fs.mkdirSync(cacheDir, { recursive: true });
-  fs.copyFileSync(outFile, cachePath);
-  
   // Clean up temp file
   try { fs.unlinkSync(tempFile); } catch(e) {}
   
