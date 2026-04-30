@@ -1,5 +1,5 @@
 # ClientLite JSX Framework License (CLJ-L)
-## Version 1.0.0 — Copyright © 2024 sussybocca
+## Version 1.0.0 — Copyright © 2026 sussybocca
 
 ---
 
