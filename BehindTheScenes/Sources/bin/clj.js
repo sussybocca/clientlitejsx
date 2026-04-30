@@ -237,7 +237,16 @@ if (hasLocalOverrides) {
 // END LOCAL LIB OVERRIDE SYSTEM WITH FALLBACK
 // ============================================
 
-const { compileProject, startHotReload } = compilerModule;
+// Compiler import with local override fallback
+let compilerModule;
+const localCompiler = libOverrides['compiler.js'];
+if (localCompiler && !localCompiler.includes('node_modules')) {
+  compilerModule = await import('file:///' + localCompiler.replace(/\\/g, '/'));
+} else {
+  compilerModule = await import('../lib/compiler.js');
+}
+
+const { compileProject, startHotReload } = compilerModule;  // ← ADD THIS LINE
 import { startServer } from '../lib/server.js';
 import { generateId, initConfig, addLanguageBlock } from '../lib/config.js';
 import { extendParser } from '../lib/customSyntax.js';
