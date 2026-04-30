@@ -989,6 +989,55 @@ export default { frontend, backend };`;
     }
   });
 }
+
+case 'EMN':
+  const emnAction = args[1];
+  
+  if (emnAction === 'export') {
+    const exportType = args[2] || '--default';
+    
+    if (exportType === '--default') {
+      console.log(chalk.magenta('\n🌐 CLJ NETLIFY EXPORT ENGINE'));
+      console.log(chalk.gray('   Loading: lib/EMN.js\n'));
+      
+      try {
+        const emnPath = path.join(__dirname, '..', 'lib', 'EMN.js');
+        await import('file:///' + emnPath.replace(/\\/g, '/'));
+      } catch (err) {
+        console.error(chalk.red(`❌ Failed to run EMN export: ${err.message}`));
+        process.exit(1);
+      }
+    } else {
+      console.error(chalk.red('❌ Usage: clj EMN export --default'));
+    }
+  } else {
+    console.error(chalk.red('❌ Usage: clj EMN export --default'));
+  }
+  break;
+
+case 'emulate':
+  const emulateFile = args[1];
+  
+  if (!emulateFile) {
+    console.error(chalk.red('❌ Usage: clj emulate <file>'));
+    console.log(chalk.yellow('   Example: clj emulate windows8.img'));
+    process.exit(1);
+  }
+  
+  console.log(chalk.magenta('\n🖥️ CLJ EMULATION ENGINE'));
+  console.log(chalk.gray(`   Loading: lib/emulator.js with ${emulateFile}\n`));
+  
+  try {
+    const emulatorPath = path.join(__dirname, '..', 'lib', 'emulator.js');
+    process.env.CLJ_EMULATE_FILE = emulateFile;
+    await import('file:///' + emulatorPath.replace(/\\/g, '/'));
+  } catch (err) {
+    console.error(chalk.red(`❌ Failed to start emulator: ${err.message}`));
+    process.exit(1);
+  }
+  break;
+
+
       break;
 
     case 'version':
@@ -1028,6 +1077,7 @@ ${chalk.yellow('COMMANDS:')}
   version, -v                   Show CLI version
   help, -h                      Show this help
 
+
 ${chalk.yellow('EXAMPLES:')}
   clj new my-app
   clj dev
@@ -1041,7 +1091,20 @@ ${chalk.yellow('EXAMPLES:')}
   clj package list
   clj server start --host=0.0.0.0 --port=80
   clj server register my-server http://192.168.1.100:6002
+
+${chalk.yellow('EMULATION:')}
+  EMN export --default          Export Multi-OS Netlify config (uses lib/EMN.js)
+  emulate <file>                Start emulation with specified image (uses lib/emulator.js)
+
+${chalk.yellow('EMULATION EXAMPLES:')}
+  clj EMN export --default
+  clj emulate windows8.img
+  clj emulate kolibri.img
+
+
 `));
+
+
       break;
 
     default:
