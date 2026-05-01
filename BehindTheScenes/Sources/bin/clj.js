@@ -994,68 +994,199 @@ export default { frontend, backend };`;
 }
 
 // ============================================
-// CLJHTML - Hybrid HTML Package System
+// CLJHTML - Custom HTML Syntax Parser
 // ============================================
 
-// Add this new command to the switch statement in main()
 case 'html':
-  const htmlTarget = args[1] || 'serve';
+  const htmlTarget = args[1];
   
-  if (htmlTarget === 'create') {
+  // If no target, auto-detect and parse all .cljhtml.html files in current directory
+  if (!htmlTarget) {
+    const cwd = process.cwd();
+    const cljhtmlFiles = fs.readdirSync(cwd).filter(f => f.endsWith('.cljhtml.html'));
+    
+    if (cljhtmlFiles.length === 0) {
+      console.log(chalk.yellow('⚠️ No .cljhtml.html files found in current directory'));
+      console.log(chalk.cyan('   Create one with: clj html create'));
+      break;
+    }
+    
+    for (const file of cljhtmlFiles) {
+      const inputPath = path.join(cwd, file);
+      console.log(chalk.cyan(`\n📄 Processing: ${file}`));
+      
+      let content = fs.readFileSync(inputPath, 'utf8');
+      const outputPath = path.join(cwd, file.replace('.cljhtml.html', '.html'));
+      
+      // Extract and EXECUTE backend code at build time
+      const backendMatch = content.match(/<clj-backend>([\s\S]*?)<\/clj-backend>/);
+      let backendResults = {};
+      if (backendMatch) {
+        const backendCode = backendMatch[1];
+        const tempFile = path.join(cwd, '.temp-backend-' + Date.now() + '.js');
+        fs.writeFileSync(tempFile, backendCode);
+        try {
+          const backendMod = require(tempFile);
+          const handlers = backendMod.handlers || backendMod;
+          
+          // Execute all handler functions and capture results
+          for (const [name, fn] of Object.entries(handlers)) {
+            if (typeof fn === 'function') {
+              try {
+                backendResults[name] = fn();
+              } catch(e) {
+                backendResults[name] = { error: e.message };
+              }
+            } else {
+              backendResults[name] = fn;
+            }
+          }
+        } catch(e) {
+          console.error(chalk.red(`   Backend error: ${e.message}`));
+        }
+        fs.unlinkSync(tempFile);
+      }
+      
+      // Extract packages
+      const pkgMatch = content.match(/<clj-packages>([\s\S]*?)<\/clj-packages>/);
+      const packages = [];
+      if (pkgMatch) {
+        const importRegex = /<import\s+package=["']([^"']+)["']/g;
+        let match;
+        while ((match = importRegex.exec(pkgMatch[1])) !== null) {
+          packages.push(match[1]);
+        }
+      }
+      
+      // Extract frontend
+      const frontendMatch = content.match(/<clj-frontend>([\s\S]*?)<\/clj-frontend>/);
+      const frontendCode = frontendMatch ? frontendMatch[1] : '';
+      
+      // Generate final HTML
+      let output = content;
+      output = output.replace(/<clj-backend>[\s\S]*?<\/clj-backend>/, '');
+      output = output.replace(/<clj-packages>[\s\S]*?<\/clj-packages>/, '');
+      output = output.replace(/<clj-frontend>[\s\S]*?<\/clj-frontend>/, '');
+      
+      const injected = `
+<script>
+// Backend results pre-computed at build time
+const __CLJ_BACKEND_RESULTS = ${JSON.stringify(backendResults)};
+
+window.__cljCallBackend = async function(fn, ...args) {
+    if (__CLJ_BACKEND_RESULTS[fn]) {
+        return __CLJ_BACKEND_RESULTS[fn];
+    }
+    return null;
+};
+
+// Package loader
+${packages.map(p => `const s=document.createElement('script'); s.src='/clj-packages/${p}.js'; document.head.appendChild(s);`).join('\n')}
+
+// CLJ Runtime
+let __cljStates = new Map();
+let __cljCounter = 0;
+
+window.__cljUseState = function(initial) {
+    const id = __cljCounter++;
+    if (!__cljStates.has(id)) __cljStates.set(id, initial);
+    const setter = (val) => {
+        __cljStates.set(id, typeof val === 'function' ? val(__cljStates.get(id)) : val);
+        __cljRerender();
+    };
+    return [__cljStates.get(id), setter];
+};
+
+window.__cljMount = function(Component, rootId) {
+    window.__cljComponent = Component;
+    __cljRerender();
+};
+
+function __cljRerender() {
+    const root = document.getElementById('root');
+    if (root && window.__cljComponent) {
+        root.innerHTML = '';
+        root.appendChild(window.__cljComponent());
+    }
+}
+
+${frontendCode}
+</script>
+`;
+      
+      output = output.replace('</body>', `${injected}</body>`);
+      fs.writeFileSync(outputPath, output);
+      
+      console.log(chalk.green(`✅ Generated: ${path.basename(outputPath)}`));
+      console.log(chalk.cyan(`   Backend results: ${Object.keys(backendResults).join(', ') || 'none'}`));
+      console.log(chalk.cyan(`   Packages: ${packages.join(', ') || 'none'}`));
+    }
+    break;
+  }
+  
+  else if (htmlTarget === 'create') {
     const htmlName = args[2] || 'index';
     const htmlPath = path.join(process.cwd(), `${htmlName}.cljhtml.html`);
     
     const template = `<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLJ Hybrid App</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: linear-gradient(135deg, #0a0a1a, #1a1a3e); min-height: 100vh; font-family: system-ui; }
-        .clj-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .clj-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; margin: 15px 0; }
-        .clj-btn { background: linear-gradient(135deg,#667eea,#764ba2); border: none; padding: 12px 24px; border-radius: 12px; color: white; cursor: pointer; }
-    </style>
+    <title>CLJ App</title>
 </head>
 <body>
-    <div id="clj-root"></div>
+    <div id="root"></div>
+
+    <clj-backend>
+        const fs = require('fs');
+        const path = require('path');
+        
+        const handlers = {
+            getMessage: () => {
+                return "Hello from backend!";
+            },
+            getTimestamp: () => {
+                return Date.now();
+            },
+            readPackageJson: () => {
+                return fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8');
+            }
+        };
+        
+        module.exports = { handlers };
+    </clj-backend>
 
     <clj-packages>
-        <!-- List packages to import -->
         <!-- <import package="my-package" as="MyPackage" /> -->
     </clj-packages>
 
-    <clj-script>
-        // Your CLJ app code here
-        // Packages are available as window[alias]
-        
+    <clj-frontend>
         function App() {
-            const [count, setCount] = __cljUseState(0);
+            const [message, setMessage] = __cljUseState('');
+            
+            const loadMessage = async () => {
+                const result = await __cljCallBackend('getMessage');
+                setMessage(result);
+            };
             
             const div = document.createElement('div');
-            div.className = 'clj-container';
             div.innerHTML = \`
-                <div class="clj-card" style="text-align:center">
-                    <h1>✨ CLJ Hybrid App ✨</h1>
-                    <p style="margin:20px 0">Count: \${count}</p>
-                    <button class="clj-btn" id="incrementBtn">Increment</button>
-                </div>
+                <h1>CLJ App</h1>
+                <button id="loadBtn">Load Message</button>
+                <p id="output"></p>
             \`;
             
-            div.querySelector('#incrementBtn').onclick = () => setCount(count + 1);
+            div.querySelector('#loadBtn').onclick = loadMessage;
             return div;
         }
         
-        __cljMount(App, 'clj-root');
-    </clj-script>
+        __cljMount(App, 'root');
+    </clj-frontend>
 </body>
 </html>`;
     
     fs.writeFileSync(htmlPath, template);
     console.log(chalk.green(`✅ Created: ${htmlName}.cljhtml.html`));
-    console.log(chalk.cyan(`   Run: npx clj html serve`));
+    console.log(chalk.cyan(`   Run: clj html`));
   }
   
   else if (htmlTarget === 'serve') {
@@ -1065,79 +1196,87 @@ case 'html':
     console.log(chalk.cyan(`🌐 Starting CLJHTML server on ${host}:${port}...`));
     
     const app = express();
-    
-    // Serve static files
     app.use(express.static(process.cwd()));
     
-    // API endpoint for packages - uses existing backend system
-    app.post('/api/:packageName/:action?', async (req, res) => {
-      const { packageName, action } = req.params;
-      
-      // Check if package exists in registry
-      const registryPath = path.join(process.cwd(), '.clj-registry', packageName);
-      const backendPath = path.join(registryPath, 'backend.cjs');
-      
-      if (fs.existsSync(backendPath)) {
-        try {
-          const mod = require(backendPath);
-          const handler = mod.default?.backend || mod.backend || mod;
-          const result = typeof handler === 'function' ? await handler(req.body, { action }) : handler;
-          res.json({ success: true, data: result });
-        } catch (err) {
-          res.status(500).json({ success: false, error: err.message });
-        }
-      } else {
-        // Check local packages
-        const localBackend = path.join(process.cwd(), 'clj-packages', packageName, 'dist', 'backend.cjs');
-        if (fs.existsSync(localBackend)) {
-          const mod = require(localBackend);
-          const handler = mod.default?.backend || mod.backend || mod;
-          const result = typeof handler === 'function' ? await handler(req.body, { action }) : handler;
-          res.json({ success: true, data: result });
-        } else {
-          res.status(404).json({ success: false, error: `Package ${packageName} not found` });
-        }
-      }
-    });
-    
-    // Serve frontend package files
-    app.get('/clj-packages/:packageName.js', (req, res) => {
-      const { packageName } = req.params;
-      const registryPath = path.join(process.cwd(), '.clj-registry', packageName, 'frontend.js');
-      const localFrontend = path.join(process.cwd(), 'clj-packages', packageName, 'dist', 'frontend.js');
-      
-      if (fs.existsSync(registryPath)) {
-        res.sendFile(registryPath);
-      } else if (fs.existsSync(localFrontend)) {
-        res.sendFile(localFrontend);
-      } else {
-        res.status(404).send(`Package ${packageName} not built. Run: cd clj-packages/${packageName} && clj package build`);
-      }
-    });
-    
-    // Process .cljhtml.html files
     app.get('/*.cljhtml.html', (req, res) => {
       const filePath = path.join(process.cwd(), req.path);
       if (fs.existsSync(filePath)) {
+        // For serve, just serve the raw file - backend runs at request time
         let content = fs.readFileSync(filePath, 'utf8');
         
-        // Inject backend API caller
-        const apiInject = `
-        <script>
-        window.__cljApi = async function(packageName, action, data) {
-            const response = await fetch(\`/api/\${packageName}/\${action}\`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            return response.json();
-        };
-        </script>
-        `;
+        // Parse and execute backend on the fly
+        const backendMatch = content.match(/<clj-backend>([\s\S]*?)<\/clj-backend>/);
+        let backendResults = {};
+        if (backendMatch) {
+          const backendCode = backendMatch[1];
+          const tempFile = path.join(process.cwd(), '.temp-serve-' + Date.now() + '.js');
+          fs.writeFileSync(tempFile, backendCode);
+          try {
+            const backendMod = require(tempFile);
+            const handlers = backendMod.handlers || backendMod;
+            for (const [name, fn] of Object.entries(handlers)) {
+              if (typeof fn === 'function') {
+                backendResults[name] = fn();
+              } else {
+                backendResults[name] = fn;
+              }
+            }
+          } catch(e) {}
+          fs.unlinkSync(tempFile);
+        }
         
-        // Replace closing body tag with injected code
-        content = content.replace('</body>', `${apiInject}</body>`);
-        res.send(content);
+        let output = content;
+        output = output.replace(/<clj-backend>[\s\S]*?<\/clj-backend>/, '');
+        output = output.replace(/<clj-packages>[\s\S]*?<\/clj-packages>/, '');
+        output = output.replace(/<clj-frontend>[\s\S]*?<\/clj-frontend>/, '');
+        
+        const pkgMatch = content.match(/<clj-packages>([\s\S]*?)<\/clj-packages>/);
+        const packages = [];
+        if (pkgMatch) {
+          const importRegex = /<import\s+package=["']([^"']+)["']/g;
+          let match;
+          while ((match = importRegex.exec(pkgMatch[1])) !== null) {
+            packages.push(match[1]);
+          }
+        }
+        
+        const frontendMatch = content.match(/<clj-frontend>([\s\S]*?)<\/clj-frontend>/);
+        const frontendCode = frontendMatch ? frontendMatch[1] : '';
+        
+        const injected = `
+<script>
+const __CLJ_BACKEND_RESULTS = ${JSON.stringify(backendResults)};
+window.__cljCallBackend = async (fn, ...args) => {
+    return __CLJ_BACKEND_RESULTS[fn];
+};
+${packages.map(p => `const s=document.createElement('script'); s.src='/clj-packages/${p}.js'; document.head.appendChild(s);`).join('\n')}
+let __cljStates = new Map();
+let __cljCounter = 0;
+window.__cljUseState = function(initial) {
+    const id = __cljCounter++;
+    if (!__cljStates.has(id)) __cljStates.set(id, initial);
+    const setter = (val) => {
+        __cljStates.set(id, typeof val === 'function' ? val(__cljStates.get(id)) : val);
+        __cljRerender();
+    };
+    return [__cljStates.get(id), setter];
+};
+window.__cljMount = function(Component, rootId) {
+    window.__cljComponent = Component;
+    __cljRerender();
+};
+function __cljRerender() {
+    const root = document.getElementById('root');
+    if (root && window.__cljComponent) {
+        root.innerHTML = '';
+        root.appendChild(window.__cljComponent());
+    }
+}
+${frontendCode}
+</script>
+`;
+        output = output.replace('</body>', `${injected}</body>`);
+        res.send(output);
       } else {
         res.status(404).send('File not found');
       }
@@ -1145,106 +1284,10 @@ case 'html':
     
     app.listen(port, host, () => {
       console.log(chalk.green(`✅ CLJHTML server running on ${host}:${port}`));
-      console.log(chalk.cyan(`   Open: http://${host}:${port}/index.cljhtml.html`));
     });
   }
   
-  else if (htmlTarget === 'build') {
-    const inputFile = args[2] || 'index.cljhtml.html';
-    const inputPath = path.join(process.cwd(), inputFile);
-    const outputDir = args.find(a => a.startsWith('--out='))?.split('=')[1] || 'dist/html';
-    
-    if (!fs.existsSync(inputPath)) {
-      console.error(chalk.red(`❌ File not found: ${inputFile}`));
-      process.exit(1);
-    }
-    
-    if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
-    
-    let content = fs.readFileSync(inputPath, 'utf8');
-    const outputPath = path.join(outputDir, path.basename(inputFile).replace('.cljhtml.html', '.html'));
-    
-    // Parse package imports and generate static bundle
-    const packageMatches = content.match(/<import\s+package=["']([^"']+)["']/g) || [];
-    const packages = packageMatches.map(m => m.match(/["']([^"']+)["']/)[1]);
-    
-    // Generate package loader
-    const packageLoader = `
-    <script>
-    (function() {
-        const packages = ${JSON.stringify(packages)};
-        const loadedPackages = {};
-        
-        window.loadPackage = async function(name) {
-            if (loadedPackages[name]) return loadedPackages[name];
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = '/clj-packages/' + name + '.js';
-                script.onload = () => {
-                    const globalName = 'CLJPkg_' + name.replace(/-/g, '_');
-                    loadedPackages[name] = window[globalName];
-                    resolve(window[globalName]);
-                };
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        };
-        
-        Promise.all(packages.map(p => loadPackage(p))).catch(console.error);
-    })();
-    </script>
-    `;
-    
-    // Inject into HTML
-    content = content.replace('</head>', `${packageLoader}</head>`);
-    
-    // Add runtime
-    const runtime = `
-    <script>
-    const __cljStates = new Map();
-    let __cljCounter = 0;
-    
-    window.__cljUseState = function(initial) {
-        const id = __cljCounter++;
-        if (!__cljStates.has(id)) __cljStates.set(id, initial);
-        const setter = (val) => {
-            __cljStates.set(id, typeof val === 'function' ? val(__cljStates.get(id)) : val);
-            __cljRerender();
-        };
-        return [__cljStates.get(id), setter];
-    };
-    
-    window.__cljMount = function(Component, rootId) {
-        const root = document.getElementById(rootId);
-        if (root) {
-            window.__cljComponent = Component;
-            __cljRerender();
-        }
-    };
-    
-    function __cljRerender() {
-        if (window.__cljComponent) {
-            const root = document.getElementById('clj-root');
-            if (root) {
-                const newEl = window.__cljComponent();
-                root.innerHTML = '';
-                if (newEl instanceof HTMLElement) root.appendChild(newEl);
-                else root.innerHTML = newEl;
-            }
-        }
-    }
-    </script>
-    `;
-    
-    content = content.replace('</body>', `${runtime}</body>`);
-    fs.writeFileSync(outputPath, content);
-    
-    console.log(chalk.green(`✅ Built: ${outputPath}`));
-    console.log(chalk.cyan(`   Packages bundled: ${packages.join(', ') || 'none'}`));
-  }
-  
   break;
-
 
 
 case 'EMN':
@@ -1294,6 +1337,66 @@ case 'emulate':
   }
   break;
 
+case 'beta':
+  const betaAction = args[1];
+  const betaPath = path.join(__dirname, '..', 'lib', 'beta.js');
+  const { ClientLiteBetaManager } = await import('file:///' + betaPath.replace(/\\/g, '/'));
+  const betaManager = new ClientLiteBetaManager();
+  await betaManager.init();
+  
+  if (betaAction === 'init') {
+    await betaManager.init({ 
+      name: args[2], 
+      author: args[3] 
+    });
+  }
+  
+  else if (betaAction === 'create') {
+    const packageName = args[2];
+    if (!packageName) {
+      console.log(chalk.red('❌ Usage: clj beta create <package-name>'));
+      break;
+    }
+    
+    let code = '';
+    if (process.stdin.isTTY) {
+      code = `// ${packageName} - Beta Package for ClientLite
+exports.hello = () => 'Hello from ${packageName}!';
+exports.version = '1.0.0-beta.0';`;
+    } else {
+      code = fs.readFileSync(0, 'utf8');
+    }
+    
+    await betaManager.createBetaFile(`${packageName}.js`, code, {
+      name: packageName,
+      author: args[3] || 'Unknown',
+      version: '1.0.0-beta.0',
+      dependencies: args[4] ? args[4].split(',') : []
+    });
+  }
+  
+  else if (betaAction === 'publish') {
+    const packageName = args[2];
+    const version = args[3] || '1.0.0-beta.0';
+    
+    if (!packageName) {
+      console.log(chalk.red('❌ Usage: clj beta publish <package-name> [version]'));
+      break;
+    }
+    
+    await betaManager.pushToOfficialRegistry(packageName, version, {
+      description: args[4] || `Beta package: ${packageName}`,
+      author: args[5] || 'Beta User'
+    });
+  }
+  
+  else if (betaAction === 'list') {
+    betaManager.listPackages();
+  }
+  
+  break;
+
+
 
       break;
 
@@ -1331,14 +1434,15 @@ ${chalk.yellow('COMMANDS:')}
   package list                  List installed CLJ packages
   server register <name> <url>  Register a backend server
   server start                  Start CLJ backend server (public with --host=0.0.0.0)
-  version, -v                   Show CLI version
-  help, -h                      Show this help
-
-   html create [name]            Create a new .cljhtml.html file
+  html create [name]            Create a new .cljhtml.html file
   html serve [--port=3000]      Serve .cljhtml.html files with backend support
   html build [file] [--out=dir] Build .cljhtml.html to static HTML
-
-
+  beta init [name] [author]     Initialize beta mode
+  beta create <name> [author]   Create a beta package
+  beta publish <name> [version] Publish beta package to npm
+  beta list                     List all beta packages
+  version, -v                   Show CLI version
+  help, -h                      Show this help
 
 ${chalk.yellow('EXAMPLES:')}
   clj new my-app
