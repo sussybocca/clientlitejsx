@@ -1,7 +1,7 @@
 /**
- * HYPER-CORE: LOGICAL CUBE ENGINE
- * ZERO GEOMETRY: No X, Y, Z, 1D, 2D, or 3D math.
- * Method: Bit-Frequency folding to simulate "Cube" structures in a 1D stream.
+ * HYPER-CORE: AGNOSTIC CUBE
+ * PROOF: No X/Y, no Width/Height used in the math kernel.
+ * The logic only sees a "Long Number" (i), not a "Place" (x,y).
  */
 
 class AxiomLogic {
@@ -13,7 +13,6 @@ class AxiomLogic {
     process() {
         this.clock += 0.008; 
         for (let i = 0; i < 8; i++) {
-            // High-tension modulation to create 'Mechanical' movement
             const resonance = i % 2 === 0 ? Math.sin(this.clock) : Math.cos(this.clock);
             this.states[i] = Math.sin(this.clock * (1 + i * 0.25) + resonance);
         }
@@ -38,28 +37,25 @@ class SystemRenderer {
     }
 
     /**
-     * THE CUBE AXIOM
-     * Uses bitwise "wrapping" to create a box-like structure in raw memory.
+     * THE AGNOSTIC KERNEL
+     * This function has NO access to canvas width or height.
+     * It only knows the Memory Address (i).
      */
-    cubeLogic(i, s) {
-        // Step 1: Logic Folding
-        // We find the 'beat' of the cube edges by using bit-masks on the index
-        const frequency = Math.floor(200 + s[7] * 50);
-        const bitEdge = (i ^ (i >> 8)) % frequency;
+    cubeAxiom(i, s) {
+        // Step 1: Sequential Folding (Based on a constant, not screen size)
+        // A "Cube" emerges if we wrap every 1024 * 5 pixels regardless of screen shape.
+        const logicWrap = 5120; 
+        const edgePulse = (i % logicWrap) < (50 * s[7]);
 
-        // Step 2: Plane Interference
-        // Instead of X/Y/Z, we use 3 different prime-number intervals 
-        // to represent the 3 "faces" of the data cluster
-        const faceA = Math.sin(i * 0.0001 * s[0]);
-        const faceB = Math.cos(i * 0.00005 * s[1]);
-        const faceC = Math.tan(i * 0.000002 * s[2]);
-
-        // Step 3: Intersection
-        // A "Cube" in this engine is just where these 3 logical frequencies overlap
-        const structure = (bitEdge < 5) ? 1.0 : 0.0;
-        const volume = (faceA * faceB * faceC);
-
-        return (structure * 0.8) + (volume * 0.2);
+        // Step 2: Pure Logical Harmonics
+        const s1 = Math.sin(i * 0.00001 * s[0]);
+        const s2 = Math.cos(i * 0.00002 * s[1]);
+        
+        // Step 3: Bitwise "Solidification"
+        // This creates 'Surfaces' using Logic Gates (AND), not Geometry
+        const logicSurface = (i ^ (i >> 4)) & (i >> 8);
+        
+        return edgePulse ? 1.0 : (logicSurface % 255 < 20 ? 0.3 : 0);
     }
 
     synthesize() {
@@ -68,18 +64,18 @@ class SystemRenderer {
         const len = bits.length;
 
         for (let i = 0; i < len; i += 4) {
-            const factor = this.cubeLogic(i, s);
+            // Passing ONLY 'i' and 's'. The math is blind to the 2D grid.
+            const factor = this.cubeAxiom(i, s);
 
-            if (factor <= 0.01) {
+            if (factor <= 0) {
                 bits[i] = bits[i+1] = bits[i+2] = 0;
                 bits[i+3] = 255;
                 continue;
             }
 
-            // NEON AXIOM: Mechanical/Digital color palette
-            bits[i]     = factor * (100 + s[4] * 155); // Edge Flash
-            bits[i + 1] = factor * (255 * Math.abs(s[5])); // Core Glow
-            bits[i + 2] = factor * (200 + s[6] * 55);  // Trace Blue
+            bits[i]     = factor * (100 + s[4] * 155); 
+            bits[i + 1] = factor * (255 * Math.abs(s[5])); 
+            bits[i + 2] = factor * (200 + s[6] * 55);  
             bits[i + 3] = 255; 
         }
         
@@ -88,11 +84,9 @@ class SystemRenderer {
 }
 
 const engine = new SystemRenderer();
-
 function run() {
     engine.logic.process();
     engine.synthesize();
     requestAnimationFrame(run);
 }
-
 run();
