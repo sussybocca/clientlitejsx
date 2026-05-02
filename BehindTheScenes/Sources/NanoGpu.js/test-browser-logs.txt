@@ -1,10 +1,91 @@
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+console.log("Memory Check:", gpu.vram instanceof Uint8Array ? "EMULATED GPU (System RAM)" : "PHYSICAL GPU");
+console.log("Renderer Check:", gpu.displayElement ? "EMULATED (DOM/Text Output)" : "PHYSICAL (Hardware Driver)");
+
+VM91:1 Memory Check: PHYSICAL GPU
+VM91:2 Renderer Check: EMULATED (DOM/Text Output)
+undefined
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
 console.log("Class Check:", gpu.constructor.name);
 console.log("Memory Type:", Object.prototype.toString.call(gpu.bufferA));
 
 VM95:1 Class Check: NanoGPU_v8
 VM95:2 Memory Type: [object Uint8Array]
-
+undefined
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}voice: "Microsoft David - English (United States)"voiceEngine: "speechSynth"voicePremium: falsevoiceState: hasAccessToPremiumVoices: falseisPremium: nullisResolved: false[[Prototype]]: Object[[Prototype]]: Object
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
 console.log("Memory Check:", gpu.bufferA instanceof Uint8Array ? "EMULATED GPU (System RAM)" : "PHYSICAL GPU");
 
 VM99:1 Memory Check: EMULATED GPU (System RAM)
 undefined
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+// Force the "Hardware" to write to a non-existent memory address
+gpu.sendData([0xC0, 999999, 65]); 
+gpu.cycle();
+
+undefined
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+// This forces a direct write to the raw memory buffer, bypassing the GPU's safety checks
+gpu.bufferA[999999] = 65;
+
+65
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+// This "corrupts" the very first pixel of your VRAM by forcing it to be 'A'
+setInterval(() => { gpu.bufferA[0] = 65; }, 10);
+
+440
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+// This forces a "Dead Pixel" into both hardware banks so the Clear command can't hide it
+setInterval(() => { 
+    gpu.bufferA[0] = 65; 
+    gpu.bufferB[0] = 65; 
+}, 1);
+
+462
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+// Sabotage the "Clear" Opcode logic
+gpu.cycle = function() {
+    // We've physically "cut the wire" to the Clear command
+    while (this.commandQueue.length > 0) {
+        const opcode = this.commandQueue.shift();
+        if (opcode === 0x20) continue; // IGNORE CLEAR COMMANDS
+        // ... (rest of your logic)
+    }
+};
+
+ƒ () {
+    // We've physically "cut the wire" to the Clear command
+    while (this.commandQueue.length > 0) {
+        const opcode = this.commandQueue.shift();
+        if (opcode === 0x20) continue; //…
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
+gpu.cycle = function() {
+    this.frame++;
+    while (this.commandQueue.length > 0) {
+      const opcode = this.commandQueue.shift();
+      switch (opcode) {
+        case 0xA1: this.registers.ROTATION = this.commandQueue.shift(); break;
+        case 0xA3: this.registers.OFFSET_X = this.commandQueue.shift(); break;
+        case 0xA6: this.registers.SAMPLER_MODE = this.commandQueue.shift(); break;
+        case 0xB0: for(let i=0; i<64; i++) this.textureRAM[i] = this.commandQueue.shift(); break;
+        case 0x40: 
+          const [rx, ry, rw, rh, rd] = [this.commandQueue.shift(), this.commandQueue.shift(), this.commandQueue.shift(), this.commandQueue.shift(), this.commandQueue.shift()];
+          this._drawRect(rx, ry, rw, rh, rd);
+          break;
+        case 0x20: break; // STILL CUT: Do nothing for Clear
+        case 0x30: this._swapBuffers(); break;
+      }
+    }
+}
+
+ƒ () {
+    this.frame++;
+    while (this.commandQueue.length > 0) {
+      const opcode = this.commandQueue.shift();
+      switch (opcode) {
+        case 0xA1: this.registers.ROTATION = this.commandQueu…
+chunk-DZAN3BIK.js:22 SettingsRoutes: [voice-trace] settings update received {voice: 'Microsoft David - English (United States)', voiceEngine: 'speechSynth', voicePremium: false, voiceState: {…}}
