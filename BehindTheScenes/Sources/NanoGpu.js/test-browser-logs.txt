@@ -3,3 +3,8 @@ console.log("Memory Type:", Object.prototype.toString.call(gpu.bufferA));
 
 VM95:1 Class Check: NanoGPU_v8
 VM95:2 Memory Type: [object Uint8Array]
+
+console.log("Memory Check:", gpu.bufferA instanceof Uint8Array ? "EMULATED GPU (System RAM)" : "PHYSICAL GPU");
+
+VM99:1 Memory Check: EMULATED GPU (System RAM)
+undefined
