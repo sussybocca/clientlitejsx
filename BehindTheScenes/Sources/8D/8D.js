@@ -1,7 +1,7 @@
 /**
- * HYPER-CORE: AGNOSTIC CUBE
- * PROOF: No X/Y, no Width/Height used in the math kernel.
- * The logic only sees a "Long Number" (i), not a "Place" (x,y).
+ * THE BITSTREAM ENGINE - ZERO SPATIAL KERNEL
+ * Fixed: This code does NOT use width or height for its internal logic.
+ * It operates on a raw, fixed-size data array.
  */
 
 class AxiomLogic {
@@ -13,8 +13,7 @@ class AxiomLogic {
     process() {
         this.clock += 0.008; 
         for (let i = 0; i < 8; i++) {
-            const resonance = i % 2 === 0 ? Math.sin(this.clock) : Math.cos(this.clock);
-            this.states[i] = Math.sin(this.clock * (1 + i * 0.25) + resonance);
+            this.states[i] = Math.sin(this.clock * (1 + i * 0.25));
         }
     }
 }
@@ -26,56 +25,39 @@ class SystemRenderer {
         document.body.style.background = "#000";
         this.ctx = this.canvas.getContext('2d');
         this.logic = new AxiomLogic();
-        this._resize();
-        window.addEventListener('resize', () => this._resize());
+        
+        // We define a fixed data-size that has nothing to do with screen width
+        this.dataSize = 1000000; 
+        this.memory = this.ctx.createImageData(1000, 1000); // Internal visual box
+        
+        this._init();
     }
 
-    _resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.memory = this.ctx.createImageData(this.canvas.width, this.canvas.height);
+    _init() {
+        // We force the canvas to just show our raw data block
+        this.canvas.width = 1000;
+        this.canvas.height = 1000;
     }
 
     /**
-     * THE AGNOSTIC KERNEL
-     * This function has NO access to canvas width or height.
-     * It only knows the Memory Address (i).
+     * THE BLIND AXIOM
+     * No Width. No Height. Just Index (i) and State (s).
      */
-    cubeAxiom(i, s) {
-        // Step 1: Sequential Folding (Based on a constant, not screen size)
-        // A "Cube" emerges if we wrap every 1024 * 5 pixels regardless of screen shape.
-        const logicWrap = 5120; 
-        const edgePulse = (i % logicWrap) < (50 * s[7]);
-
-        // Step 2: Pure Logical Harmonics
-        const s1 = Math.sin(i * 0.00001 * s[0]);
-        const s2 = Math.cos(i * 0.00002 * s[1]);
-        
-        // Step 3: Bitwise "Solidification"
-        // This creates 'Surfaces' using Logic Gates (AND), not Geometry
-        const logicSurface = (i ^ (i >> 4)) & (i >> 8);
-        
-        return edgePulse ? 1.0 : (logicSurface % 255 < 20 ? 0.3 : 0);
-    }
-
     synthesize() {
         const bits = this.memory.data;
         const s = this.logic.states;
-        const len = bits.length;
 
-        for (let i = 0; i < len; i += 4) {
-            // Passing ONLY 'i' and 's'. The math is blind to the 2D grid.
-            const factor = this.cubeAxiom(i, s);
+        for (let i = 0; i < bits.length; i += 4) {
+            // Logic: Is this bit active? 
+            // We use a "Modulo Frequency" that is totally independent of 2D grids.
+            const freq = 4096; // Purely logical wrap-point
+            const logicEdge = (i % freq) < (100 * s[0]);
+            
+            const intensity = logicEdge ? 1.0 : 0.05;
 
-            if (factor <= 0) {
-                bits[i] = bits[i+1] = bits[i+2] = 0;
-                bits[i+3] = 255;
-                continue;
-            }
-
-            bits[i]     = factor * (100 + s[4] * 155); 
-            bits[i + 1] = factor * (255 * Math.abs(s[5])); 
-            bits[i + 2] = factor * (200 + s[6] * 55);  
+            bits[i]     = intensity * (127 + s[1] * 127); 
+            bits[i + 1] = intensity * (127 + s[2] * 127); 
+            bits[i + 2] = intensity * (200 + s[3] * 55);  
             bits[i + 3] = 255; 
         }
         
