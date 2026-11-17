@@ -1,0 +1,34 @@
+name: CLJ Verify C11 WASM Compiler
+on:
+  workflow_dispatch:
+  push:
+    branches: [CLJ]
+    paths:
+      - 'clj-ultracore/**'
+      - '.github/workflows/clj-verify-wasm.yml'
+  pull_request:
+    paths:
+      - 'clj-ultracore/**'
+permissions:
+  contents: read
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install C11 and WebAssembly toolchains
+        run: sudo apt-get update && sudo apt-get install -y build-essential clang lld python3
+      - name: Rebuild C11 and WebAssembly artifacts
+        working-directory: clj-ultracore
+        run: sh scripts/build.sh
+      - name: Verify native compiler fixtures and layouts
+        working-directory: clj-ultracore
+        run: python3 tests/test_release.py
+      - name: Verify browser WASM compiler matches native
+        working-directory: clj-ultracore
+        run: node tests/typed_parity.mjs
+      - name: Upload validated WASM as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: clj-ultracore-compiler-wasm
+          path: clj-ultracore/browser/cjs18-compiler.wasm

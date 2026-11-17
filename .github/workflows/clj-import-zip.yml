@@ -1,0 +1,65 @@
+name: CLJ Import Release ZIP
+on:
+  workflow_dispatch:
+    inputs:
+      archive:
+        description: 'Committed ZIP path under clj-ultracore/releases/archives/'
+        required: true
+        type: string
+  push:
+    branches: [CLJ]
+    paths:
+      - 'clj-ultracore/releases/archives/*.zip'
+permissions:
+  contents: write
+jobs:
+  extract-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+      - name: Validate source archive path
+        id: path
+        env:
+          ARCHIVE: ${{ github.event.inputs.archive }}
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import os, re, subprocess
+          if os.environ['EVENT']=='workflow_dispatch':
+              paths=[os.environ['ARCHIVE']]
+          else:
+              before=os.environ.get('BEFORE','')
+              after=os.environ['AFTER']
+              # Get changed paths in the trigger commit (new and modified ZIP files only).
+              args=['git','diff','--name-only','--diff-filter=AM',before,after] if before and before!='0'*40 else ['git','ls-files']
+              paths=subprocess.check_output(args,text=True).splitlines()
+          paths=[p for p in paths if re.fullmatch(r'clj-ultracore/releases/archives/[A-Za-z0-9_.-]+\.zip',p)]
+          if not paths:raise SystemExit('No authorized committed CLJ ZIP found')
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:
+              f.write('archives<<EOF\n'+'\n'.join(paths)+'\nEOF\n')
+          PY
+      - name: Extract committed archives without executing contents
+        env:
+          ARCHIVES: ${{ steps.path.outputs.archives }}
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, subprocess
+          for rel in os.environ['ARCHIVES'].splitlines():
+              name=pathlib.Path(rel).stem
+              target='clj-ultracore/imported/'+name
+              subprocess.check_call(['python3','clj-ultracore/scripts/extract_release_zip.py',rel,target])
+          PY
+      - name: Commit extracted source on CLJ branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- clj-ultracore/imported
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore(clj): safely import committed source archive'
+            git push origin HEAD:CLJ
+          fi
