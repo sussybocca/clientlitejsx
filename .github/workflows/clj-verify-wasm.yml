@@ -27,6 +27,8 @@ jobs:
       - name: Verify browser WASM compiler matches native
         working-directory: clj-ultracore
         run: node tests/typed_parity.mjs
+          node tests/styled_wasm_parity.mjs
+          node tests/styled_game_runtime.mjs examples/ui/compiled/neon-score-arena.mjs
       - name: Upload validated WASM as workflow artifact
         uses: actions/upload-artifact@v4
         with:
